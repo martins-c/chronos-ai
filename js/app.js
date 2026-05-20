@@ -236,7 +236,7 @@ async function handleSendMessage(text) {
     // onError
     (errorMsg) =>  {
       ui.showToast(errorMsg, 'error', 5000);
-      chat.showError(errorMsg);
+      chat.addMessage('assistant', errorMsg);
       ui.setInputDisabled(false);
       currentAbortController = null;
     }
