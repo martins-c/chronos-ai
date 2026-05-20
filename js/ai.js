@@ -106,26 +106,24 @@ SEMPRE passe confiança.
 
 const MODEL = 'gemini-2.5-flash';
 
-/**
- * Build the Gemini API URL for streaming.
- * Uses SSE streaming via alt=sse query param.
- */
-function buildApiUrl(apiKey) {
-  return `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:streamGenerateContent?alt=sse&key=${apiKey}`;
-}
 
-/**
- * Convert internal message format ({role, content}) to Gemini format.
- *
- * Gemini uses:
- *  - role: "user" | "model"  (no "assistant" or "system")
- *  - parts: [{ text: "..." }]
- *  - system prompt goes in systemInstruction
- */
-function toGeminiMessages(messages) {
+
+
+
+
+  /**
+   * Convert internal message format ({role, content}) to Gemini format.
+   *
+   * Gemini uses:
+   *  - role: "user" | "model"  (no "assistant" or "system")
+   *  - parts: [{ text: "..." }]
+   *  - system prompt goes in systemInstruction
+   */
+  function toGeminiMessages(messages)
+{
   return messages.map((msg) => ({
     role: msg.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: msg.content }],
+    parts: [{text: msg.content}],
   }));
 }
 
@@ -139,7 +137,7 @@ function toGeminiMessages(messages) {
  * @param {function} onError - Called on error (error message string)
  * @returns {AbortController} - Call .abort() to cancel the stream
  */
-export function sendMessage(messages, apiKey, onChunk, onDone, onError) {
+export function sendMessage(messages, onChunk, onDone, onError) {
   const controller = new AbortController();
 
   const geminiContents = toGeminiMessages(messages);
@@ -147,7 +145,7 @@ export function sendMessage(messages, apiKey, onChunk, onDone, onError) {
   const requestBody = {
     contents: geminiContents,
     systemInstruction: {
-      parts: [{ text: SYSTEM_PROMPT }],
+      parts: [{text: SYSTEM_PROMPT}],
     },
     generationConfig: {
       temperature: 0.8,
@@ -156,16 +154,16 @@ export function sendMessage(messages, apiKey, onChunk, onDone, onError) {
       topK: 40,
     },
     safetySettings: [
-      { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
-      { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
-      { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
-      { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
+      {category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE'},
+      {category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE'},
+      {category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE'},
+      {category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE'},
     ],
   };
 
   (async () => {
     try {
-      const response = await fetch(buildApiUrl(apiKey), {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -177,7 +175,7 @@ export function sendMessage(messages, apiKey, onChunk, onDone, onError) {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         const errorMsg =
-          errorData?.error?.message || `Erro HTTP ${response.status}`;
+            errorData?.error?.message || `Erro HTTP ${response.status}`;
 
         if (response.status === 400) {
           // API key format issues or bad request
@@ -204,10 +202,10 @@ export function sendMessage(messages, apiKey, onChunk, onDone, onError) {
       let buffer = '';
 
       while (true) {
-        const { done, value } = await reader.read();
+        const {done, value} = await reader.read();
         if (done) break;
 
-        buffer += decoder.decode(value, { stream: true });
+        buffer += decoder.decode(value, {stream: true});
         const lines = buffer.split('\n');
         buffer = lines.pop() || '';
 
