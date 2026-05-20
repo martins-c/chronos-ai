@@ -240,7 +240,6 @@ async function handleSendMessage(text) {
       ui.setInputDisabled(false);
       currentAbortController = null;
     }
-  );
 }
 
 // ━━━ Refresh Sidebar ━━━
