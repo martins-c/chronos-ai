@@ -197,9 +197,22 @@ async function handleSendMessage(text) {
   chat.removeTypingIndicator();
   chat.startStreaming();
 
- currentAbortController = sendMessage(
-     apiMessages
- )
+  currentAbortController = sendMessage(
+      apiMessages,
+      (chunk, _fullText) => {
+        chat.appendStreamChunk(chunk);
+      },
+      (fullText) => {
+        chat.finishStreaming(fullText);
+        ui.setInputDisabled(false);
+        currentAbortController = null;
+      },
+      (error) => {
+        chat.showError(error.message || 'Erro ao conectar com a Chronos AI.');
+        ui.setInputDisabled(false);
+        currentAbortController = null;
+      }
+  );
     // onChunk
     (chunk, _fullText) => {
       chat.appendStreamChunk(chunk);
@@ -221,16 +234,11 @@ async function handleSendMessage(text) {
       refreshChatList();
     },
     // onError
-    (errorMsg) => {
-      chat.cancelStreaming();
+    (errorMsg) =>  {
+      ui.showToast(errorMsg, 'error', 5000);
+      chat.showError(errorMsg);
       ui.setInputDisabled(false);
       currentAbortController = null;
-      ui.showToast(errorMsg, 'error', 5000);
-
-      // If API key error, show modal
-      if (errorMsg.includes('Chave') || errorMsg.includes('inválida')) {
-        setTimeout(() => ui.showApiKeyModal(), 1000);
-      }
     }
   );
 }
