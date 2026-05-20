@@ -197,9 +197,9 @@ async function handleSendMessage(text) {
   chat.removeTypingIndicator();
   chat.startStreaming();
 
-  currentAbortController = sendMessage(
-    apiMessages,
-    settings.apiKey,
+ currentAbortController = sendMessage(
+     apiMessages
+ )
     // onChunk
     (chunk, _fullText) => {
       chat.appendStreamChunk(chunk);
