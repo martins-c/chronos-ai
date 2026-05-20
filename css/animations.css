@@ -1,0 +1,232 @@
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CHRONOS AI — Animations
+   All keyframes and transition presets
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* ━━━ Message Entrance ━━━ */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes messageSlideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes messageSlideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(16px) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+/* ━━━ Typing Indicator Dots ━━━ */
+@keyframes typingPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.75);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ━━━ Glow Pulse (buttons, focus rings) ━━━ */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 6px rgba(var(--color-primary-rgb), 0.2),
+      0 0 12px rgba(var(--color-primary-rgb), 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 14px rgba(var(--color-primary-rgb), 0.4),
+      0 0 28px rgba(var(--color-primary-rgb), 0.15);
+  }
+}
+
+@keyframes glowPulseSecondary {
+  0%, 100% {
+    box-shadow:
+      0 0 6px rgba(var(--color-secondary-rgb), 0.2),
+      0 0 12px rgba(var(--color-secondary-rgb), 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 14px rgba(var(--color-secondary-rgb), 0.4),
+      0 0 28px rgba(var(--color-secondary-rgb), 0.15);
+  }
+}
+
+/* ━━━ Ambient Orbs (background) ━━━ */
+@keyframes orbFloat1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%      { transform: translate(40px, -60px) scale(1.1); }
+  50%      { transform: translate(-20px, -100px) scale(0.95); }
+  75%      { transform: translate(50px, -40px) scale(1.05); }
+}
+
+@keyframes orbFloat2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%      { transform: translate(-50px, 40px) scale(1.08); }
+  50%      { transform: translate(40px, 70px) scale(0.92); }
+  75%      { transform: translate(-30px, 20px) scale(1.12); }
+}
+
+@keyframes orbFloat3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(60px, 50px) scale(1.15); }
+  66%      { transform: translate(-40px, -30px) scale(0.85); }
+}
+
+/* ━━━ Welcome Screen ━━━ */
+@keyframes welcomeFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes logoGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(var(--color-primary-rgb), 0.4))
+            drop-shadow(0 0 30px rgba(var(--color-primary-rgb), 0.15));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(var(--color-primary-rgb), 0.7))
+            drop-shadow(0 0 50px rgba(var(--color-primary-rgb), 0.25));
+  }
+}
+
+@keyframes logoRingSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes lineExpand {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 60px;
+    opacity: 1;
+  }
+}
+
+/* ━━━ Fade Variants ━━━ */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ━━━ Shimmer (streaming text cursor) ━━━ */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ━━━ Cursor Blink (streaming) ━━━ */
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/* ━━━ Spin ━━━ */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ━━━ Status Pulse (online dot) ━━━ */
+@keyframes statusPulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(var(--color-success-rgb), 0.5);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 0 4px rgba(var(--color-success-rgb), 0);
+  }
+}
+
+/* ━━━ Chip Entrance (staggered) ━━━ */
+@keyframes chipSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ━━━ Shake (error feedback) ━━━ */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}

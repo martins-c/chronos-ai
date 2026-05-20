@@ -1,0 +1,123 @@
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CHRONOS AI — Design Tokens
+   Premium Dark Futuristic Theme
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+:root {
+  /* ━━━ Colors ━━━ */
+  --color-bg:               #0a0a0f;
+  --color-surface:          #12121a;
+  --color-surface-elevated: #1a1a2e;
+  --color-surface-hover:    #22223a;
+
+  --color-border:           rgba(255, 255, 255, 0.08);
+  --color-border-light:     rgba(255, 255, 255, 0.12);
+  --color-border-focus:     rgba(0, 245, 255, 0.35);
+
+  --color-text-primary:     #e9f1ff;
+  --color-text-secondary:   #8a8a9a;
+  --color-text-muted:       #555566;
+
+  /* Accent — Electric Cyan */
+  --color-primary:          #00f5ff;
+  --color-primary-rgb:      0, 245, 255;
+  --color-primary-dim:      rgba(0, 245, 255, 0.15);
+  --color-primary-subtle:   rgba(0, 245, 255, 0.08);
+
+  /* Accent — Cyber Violet */
+  --color-secondary:        #7c3cff;
+  --color-secondary-rgb:    124, 60, 255;
+  --color-secondary-dim:    rgba(124, 60, 255, 0.15);
+
+  /* Semantic */
+  --color-success:          #00c896;
+  --color-success-rgb:      0, 200, 150;
+  --color-warning:          #ffb800;
+  --color-error:            #ff2e63;
+  --color-error-rgb:        255, 46, 99;
+
+  /* ━━━ Typography ━━━ */
+  --font-display:  'Space Grotesk', system-ui, sans-serif;
+  --font-body:     'Inter', system-ui, sans-serif;
+  --font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs:       0.75rem;    /* 12px */
+  --text-sm:       0.8125rem;  /* 13px */
+  --text-base:     0.9375rem;  /* 15px */
+  --text-lg:       1.125rem;   /* 18px */
+  --text-xl:       1.5rem;     /* 24px */
+  --text-2xl:      2rem;       /* 32px */
+  --text-3xl:      2.5rem;     /* 40px */
+  --text-4xl:      3.5rem;     /* 56px */
+
+  --leading-tight:   1.2;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.7;
+
+  --tracking-tight:  -0.02em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.05em;
+  --tracking-wider:   0.1em;
+
+  /* ━━━ Spacing ━━━ */
+  --space-1:   0.25rem;
+  --space-2:   0.5rem;
+  --space-3:   0.75rem;
+  --space-4:   1rem;
+  --space-5:   1.25rem;
+  --space-6:   1.5rem;
+  --space-8:   2rem;
+  --space-10:  2.5rem;
+  --space-12:  3rem;
+  --space-16:  4rem;
+  --space-20:  5rem;
+
+  /* ━━━ Borders ━━━ */
+  --radius-sm:    8px;
+  --radius-md:    12px;
+  --radius-lg:    16px;
+  --radius-xl:    24px;
+  --radius-full:  9999px;
+
+  /* ━━━ Shadows ━━━ */
+  --shadow-sm:   0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md:   0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg:   0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-xl:   0 16px 48px rgba(0, 0, 0, 0.6);
+  --shadow-glow-primary:   0 0 15px rgba(var(--color-primary-rgb), 0.3),
+                           0 0 40px rgba(var(--color-primary-rgb), 0.1);
+  --shadow-glow-secondary: 0 0 15px rgba(var(--color-secondary-rgb), 0.3),
+                           0 0 40px rgba(var(--color-secondary-rgb), 0.1);
+
+  /* ━━━ Glass ━━━ */
+  --glass-bg:         rgba(255, 255, 255, 0.04);
+  --glass-bg-medium:  rgba(255, 255, 255, 0.06);
+  --glass-bg-heavy:   rgba(255, 255, 255, 0.08);
+  --glass-blur:       blur(16px);
+  --glass-blur-heavy: blur(24px);
+  --glass-border:     1px solid rgba(255, 255, 255, 0.08);
+
+  /* ━━━ Transitions ━━━ */
+  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast:    150ms;
+  --duration-normal:  250ms;
+  --duration-slow:    400ms;
+  --duration-slower:  600ms;
+
+  /* ━━━ Layout ━━━ */
+  --sidebar-width:    280px;
+  --header-height:    60px;
+  --input-area-min:   80px;
+  --chat-max-width:   780px;
+
+  /* ━━━ Z-index layers ━━━ */
+  --z-bg:       -1;
+  --z-base:      1;
+  --z-sidebar:   100;
+  --z-overlay:   200;
+  --z-header:    300;
+  --z-modal:     400;
+  --z-welcome:   500;
+}

@@ -1,0 +1,216 @@
+nod<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Chronos AI — Seu mentor inteligente de organização acadêmica. Crie rotinas de estudo personalizadas, reduza ansiedade e aumente sua produtividade.">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>Chronos AI — Organização Acadêmica Inteligente</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/chat.css">
+  <link rel="stylesheet" href="css/components.css">
+
+  <!-- Favicon (inline SVG as data URI) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%230a0a0f' stroke='%2300f5ff' stroke-width='1.5'/><text x='16' y='21' text-anchor='middle' font-size='16' fill='%2300f5ff'>⚡</text></svg>">
+</head>
+<body>
+  <!-- ━━━ Ambient Background ━━━ -->
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- ━━━ Welcome Screen ━━━ -->
+  <div class="welcome-screen" id="welcomeScreen">
+    <div class="welcome-content">
+      <div class="welcome-logo">
+        <!-- Animated ring -->
+        <div class="logo-ring-container">
+          <svg class="logo-ring" viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00f5ff" />
+                <stop offset="50%" stop-color="#7c3cff" />
+                <stop offset="100%" stop-color="#00f5ff" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="46" />
+          </svg>
+          <!-- Center icon -->
+          <div class="logo-icon-center">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
+          </div>
+        </div>
+
+        <h1 class="welcome-title">Chronos <span class="logo-ai">AI</span></h1>
+        <div class="welcome-line" aria-hidden="true"></div>
+        <p class="welcome-tagline">Sua rotina nunca mais vai ser a mesma.</p>
+      </div>
+
+      <button class="btn-start" id="btnStart">
+        Começar
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ━━━ App Container ━━━ -->
+  <div class="app" id="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-small">
+          <div class="logo-small-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
+          </div>
+          <span class="logo-small-text">Chronos <span class="logo-ai">AI</span></span>
+        </div>
+        <button class="btn-new-chat" id="btnNewChat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Nova conversa</span>
+        </button>
+      </div>
+
+      <div class="sidebar-chats" id="sidebarChats">
+        <div class="sidebar-empty" id="sidebarEmpty">
+          <span>Nenhuma conversa ainda</span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="btn-clear-history" id="btnClearHistory">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+          </svg>
+          <span>Limpar histórico</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Chat Area -->
+    <main class="main">
+
+      <!-- Chat Header -->
+      <header class="chat-header">
+        <button class="btn-icon btn-menu" id="btnMenu" aria-label="Abrir menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <div class="chat-header-info">
+          <h2 class="chat-header-title">
+            Chronos <span class="logo-ai">AI</span>
+          </h2>
+          <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Online</span>
+          </div>
+        </div>
+
+        <button class="btn-icon" id="btnSettings" aria-label="Configurações">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path>
+          </svg>
+        </button>
+      </header>
+
+      <!-- Messages Area -->
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-messages-inner" id="chatMessagesInner">
+          <!-- Empty State -->
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">⚡</div>
+            <h3>E aí. Eu sou o Chronos.</h3>
+            <p>Me conta como sua rotina funciona — o que estuda, quando tem tempo, o que pesa mais. Eu organizo o resto.</p>
+            <div class="quick-actions" id="quickActions">
+              <button class="chip" data-prompt="Quero montar uma rotina de estudos que funcione de verdade">📚 Montar minha rotina</button>
+              <button class="chip" data-prompt="Tenho provas chegando e preciso me organizar rápido">📝 Provas chegando</button>
+              <button class="chip" data-prompt="Tô procrastinando demais e preciso de ajuda pra focar">⚡ Tô procrastinando</button>
+              <button class="chip" data-prompt="Trabalho e estudo ao mesmo tempo, minha rotina tá caótica">😴 Trabalho e estudo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-input-area">
+        <div class="input-wrapper">
+          <div class="input-container" id="inputContainer">
+            <textarea
+              id="messageInput"
+              placeholder="Me conta o que tá rolando..."
+              rows="1"
+              aria-label="Mensagem"
+            ></textarea>
+            <button class="btn-send" id="btnSend" aria-label="Enviar mensagem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+          <p class="input-hint">Chronos AI pode cometer erros. Verifique informações importantes.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ━━━ API Key Modal ━━━ -->
+  <div class="modal-overlay" id="apiKeyModal">
+    <div class="modal">
+      <h3>🔑 Chave da API Gemini</h3>
+      <p>Para que o Chronos AI funcione, insira sua chave da API do <strong>Google AI Studio</strong>. É gratuita e fica salva apenas no seu navegador.</p>
+      <input
+        type="password"
+        class="modal-input"
+        id="apiKeyInput"
+        placeholder="AIza..."
+        autocomplete="off"
+      >
+      <div class="modal-actions">
+        <button class="btn-modal btn-modal-secondary" id="btnModalCancel">Cancelar</button>
+        <button class="btn-modal btn-modal-primary" id="btnModalSave">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━ Toast ━━━ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ━━━ Scripts ━━━ -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
