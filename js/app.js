@@ -152,13 +152,6 @@ async function handleSendMessage(text) {
 
   const trimmedText = text.trim();
 
-  // Check API key
-  const settings = getSettings();
-  if (!settings.apiKey) {
-    ui.showApiKeyModal();
-    return;
-  }
-
   // Create conversation if needed
   if (!currentConversation) {
     currentConversation = createConversation();
