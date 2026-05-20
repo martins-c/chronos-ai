@@ -208,7 +208,7 @@ async function handleSendMessage(text) {
         currentAbortController = null;
       },
       (error) => {
-        chat.showError(error.message || 'Erro ao conectar com a Chronos AI.');
+        ui.showToast(error.message || 'Erro ao conectar com a Chronos AI.', 'error', 5000);
         ui.setInputDisabled(false);
         currentAbortController = null;
       }
