@@ -168,7 +168,7 @@ export function sendMessage(messages, onChunk, onDone, onError) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify({messages,}),
         signal: controller.signal,
       });
 
