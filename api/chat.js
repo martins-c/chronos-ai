@@ -109,7 +109,7 @@ const MODEL = 'gemini-2.5-flash';
 
 // ━━━ Vercel Edge Runtime ━━━
 export const config = {
-  runtime: 'edge',
+  runtime: 'nodejs',
 };
 
 export default async function handler(req) {

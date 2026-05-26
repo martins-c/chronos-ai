@@ -21,6 +21,9 @@ import {
 import { sendMessage } from './ai.js';
 import { UIManager } from './ui.js';
 import { ChatManager } from './chat.js';
+import { initFocusMode } from './focus.js';
+import { initNavigation } from './navigation.js';
+import { initDashboard } from './dashboard.js';
 
 // ━━━ DOM References ━━━
 
@@ -34,12 +37,18 @@ const elements = {
 
   // Sidebar
   sidebar: document.getElementById('sidebar'),
+  sidebarNav: document.getElementById('sidebarNav'),
+  sidebarChatPanel: document.getElementById('sidebarChatPanel'),
   sidebarOverlay: document.getElementById('sidebarOverlay'),
   sidebarChats: document.getElementById('sidebarChats'),
   sidebarEmpty: document.getElementById('sidebarEmpty'),
   btnMenu: document.getElementById('btnMenu'),
   btnNewChat: document.getElementById('btnNewChat'),
   btnClearHistory: document.getElementById('btnClearHistory'),
+
+  // Placeholder view
+  placeholderTitle: document.getElementById('placeholderTitle'),
+  placeholderSubtitle: document.getElementById('placeholderSubtitle'),
 
   // Chat
   chatMessages: document.getElementById('chatMessages'),
@@ -55,6 +64,11 @@ const elements = {
   // Settings
   btnSettings: document.getElementById('btnSettings'),
 
+  // Focus mode
+  btnFocus: document.getElementById('btnFocus'),
+  focusOverlay: document.getElementById('focusOverlay'),
+  btnFocusClose: document.getElementById('btnFocusClose'),
+
   // Modal
   apiKeyModal: document.getElementById('apiKeyModal'),
   apiKeyInput: document.getElementById('apiKeyInput'),
@@ -69,6 +83,20 @@ const elements = {
 
 const ui = new UIManager(elements);
 const chat = new ChatManager(elements);
+const focusMode = initFocusMode(elements);
+
+const navigation = initNavigation({
+  elements,
+  focusMode,
+  ui,
+  onViewChange: (view) => {
+    if (view === 'chat') {
+      setTimeout(() => elements.messageInput?.focus(), 150);
+    }
+  },
+});
+
+initDashboard({ focusMode, navigation });
 
 // ━━━ State ━━━
 
@@ -82,6 +110,7 @@ function init() {
   if (hasBeenWelcomed()) {
     ui.hideWelcome();
     loadLastConversation();
+    navigation.setView('home');
   } else {
     ui.showWelcome();
   }
@@ -198,32 +227,11 @@ async function handleSendMessage(text) {
   chat.startStreaming();
 
   currentAbortController = sendMessage(
-      apiMessages,
-      (chunk, _fullText) => {
-        chat.appendStreamChunk(chunk);
-      },
-      (fullText) => {
-        chat.finishStreaming(fullText);
-        ui.setInputDisabled(false);
-        currentAbortController = null;
-      },
-      (error) => {
-        ui.showToast(error.message || 'Erro ao conectar com a Chronos AI.', 'error', 5000);
-        ui.setInputDisabled(false);
-        currentAbortController = null;
-      }
-  );
-    // onChunk
+    apiMessages,
     (chunk, _fullText) => {
       chat.appendStreamChunk(chunk);
     },
-    // onDone
     (fullText) => {
-      chat.finishStreaming(fullText);
-      ui.setInputDisabled(false);
-      currentAbortController = null;
-
-      // Save AI response
       const aiMessage = {
         role: 'assistant',
         content: fullText,
@@ -232,14 +240,17 @@ async function handleSendMessage(text) {
       currentConversation.messages.push(aiMessage);
       saveConversation(currentConversation);
       refreshChatList();
+
+      chat.finishStreaming(fullText);
+      ui.setInputDisabled(false);
+      currentAbortController = null;
     },
-    // onError
-    (errorMsg) =>  {
+    (errorMsg) => {
       ui.showToast(errorMsg, 'error', 5000);
-      chat.addMessage('assistant', errorMsg);
       ui.setInputDisabled(false);
       currentAbortController = null;
     }
+  );
 }
 
 // ━━━ Refresh Sidebar ━━━
@@ -258,15 +269,16 @@ function bindEvents() {
     setWelcomed();
     ui.hideWelcome();
     loadLastConversation();
-    elements.messageInput.focus();
+    navigation.setView('home');
   });
 
-  // Sidebar — Menu toggle
-  elements.btnMenu.addEventListener('click', () => ui.toggleSidebar());
   elements.sidebarOverlay.addEventListener('click', () => ui.closeSidebar());
 
   // Sidebar — New chat
-  elements.btnNewChat.addEventListener('click', startNewConversation);
+  elements.btnNewChat.addEventListener('click', () => {
+    navigation.setView('chat');
+    startNewConversation();
+  });
 
   // Sidebar — Clear history
   elements.btnClearHistory.addEventListener('click', () => {
@@ -299,6 +311,7 @@ function bindEvents() {
     if (item) {
       const convo = getConversation(item.dataset.id);
       if (convo) {
+        navigation.setView('chat');
         loadConversation(convo);
         ui.closeSidebar();
       }
@@ -365,10 +378,12 @@ function bindEvents() {
     }
   });
 
-  // Escape — close modal/sidebar
+  // Escape — close focus/modal/sidebar
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (elements.apiKeyModal.classList.contains('active')) {
+      if (focusMode.isOpen()) {
+        focusMode.close();
+      } else if (elements.apiKeyModal.classList.contains('active')) {
         ui.hideApiKeyModal();
       } else if (elements.sidebar.classList.contains('open')) {
         ui.closeSidebar();

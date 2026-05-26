@@ -119,5 +119,6 @@
   --z-overlay:   200;
   --z-header:    300;
   --z-modal:     400;
+  --z-focus:     450;
   --z-welcome:   500;
 }
