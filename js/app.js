@@ -424,8 +424,10 @@ function enterChronos(name) {
   );
 
   earlyAccessScreen.style.display = "none";
+  document.body.style.overflow = "hidden";
 
-  appContainer.classList.remove("hidden");
+  appContainer.style.display = "flex";
+  document.body.style.overflow = "auto";
 
   updateChronosUsername(username);
 }
@@ -452,7 +454,7 @@ function loadChronosUser() {
 
     earlyAccessScreen.style.display = "none";
 
-    appContainer.classList.remove("hidden");
+    appContainer.style.display = "flex";
 
     updateChronosUsername(user.name);
 
