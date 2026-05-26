@@ -452,17 +452,25 @@
 .early-access-screen {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+
+  width: 100vw;
+  height: 100vh;
+
+  z-index: 999999;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background:
-    radial-gradient(circle at top, rgba(0, 153, 255, 0.15), transparent 40%),
-    #04070d;
-
   padding: 24px;
+
+  background:
+    radial-gradient(circle at top, rgba(0, 153, 255, 0.18), transparent 35%),
+    rgba(4, 7, 13, 0.96);
+
+  backdrop-filter: blur(18px);
+
+  overflow: hidden;
 }
 
 .early-access-card {
@@ -577,5 +585,8 @@
 
 .early-access-card button:hover {
   transform: translateY(-2px);
+}
+.app.hidden {
+  display: none !important;
 }
 }
