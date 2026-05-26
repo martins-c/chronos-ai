@@ -24,6 +24,8 @@ import { ChatManager } from './chat.js';
 import { initFocusMode } from './focus.js';
 import { initNavigation } from './navigation.js';
 import { initDashboard } from './dashboard.js';
+import { initPlanView } from './plan.js';
+import { initTasksView } from './tasks.js';
 
 // ━━━ DOM References ━━━
 
@@ -90,6 +92,9 @@ const ui = new UIManager(elements);
 const chat = new ChatManager(elements);
 const focusMode = initFocusMode({ elements, ui });
 
+const planView = initPlanView({ ui });
+const tasksView = initTasksView({ ui });
+
 const navigation = initNavigation({
   elements,
   focusMode,
@@ -98,6 +103,8 @@ const navigation = initNavigation({
     if (view === 'chat') {
       setTimeout(() => elements.messageInput?.focus(), 150);
     }
+    if (view === 'plano') planView.render?.();
+    if (view === 'tarefas') tasksView.render?.();
   },
 });
 

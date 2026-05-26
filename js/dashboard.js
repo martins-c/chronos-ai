@@ -1,9 +1,22 @@
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-//  CHRONOS AI — Dashboard (Phase 1–2)
-//  Card interactions + live focus sync
+//  CHRONOS AI — Dashboard (Phase 1–3)
+//  Focus sync + plan preview + task stats
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 const RING_CIRCUMFERENCE = 2 * Math.PI * 45;
+
+import {
+  getProductivityStats,
+  togglePlanItem,
+  formatMinutes,
+  DIFFICULTY_LABELS,
+} from './productivity-storage.js';
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
 
 export function initDashboard({ focusMode, navigation }) {
   document.querySelectorAll('[data-action="open-focus"]').forEach((el) => {
@@ -35,6 +48,9 @@ export function initDashboard({ focusMode, navigation }) {
   const dashFocusRing = document.querySelector('.dash-focus-ring-progress');
   const dashStatFocusToday = document.getElementById('dashStatFocusToday');
   const dashStatSessions = document.getElementById('dashStatSessions');
+  const dashStatTasksDone = document.getElementById('dashStatTasksDone');
+  const dashPlanList = document.getElementById('dashPlanList');
+  const dashPlanEmpty = document.getElementById('dashPlanEmpty');
 
   function syncFocusUI(state) {
     if (dashFocusTime) dashFocusTime.textContent = state.display;
@@ -84,5 +100,47 @@ export function initDashboard({ focusMode, navigation }) {
     return `${m}m`;
   }
 
+  function syncProductivityUI() {
+    const stats = getProductivityStats();
+
+    if (dashStatTasksDone) {
+      dashStatTasksDone.textContent = String(stats.tasksCompletedToday);
+    }
+
+    if (!dashPlanList) return;
+
+    dashPlanList.innerHTML = '';
+    const preview = stats.planToday.slice(0, 4);
+
+    if (preview.length === 0) {
+      dashPlanEmpty?.classList.remove('hidden');
+      return;
+    }
+
+    dashPlanEmpty?.classList.add('hidden');
+
+    preview.forEach((item) => {
+      const li = document.createElement('li');
+      li.className = `dash-task${item.completed ? ' done' : ''}`;
+      li.dataset.id = item.id;
+      li.innerHTML = `
+        <span class="dash-task-check" role="button" tabindex="0" aria-label="Alternar conclusão"></span>
+        <span>${escapeHtml(item.title)}</span>
+        <time class="dash-task-time">${formatMinutes(item.estimatedMinutes)} · ${DIFFICULTY_LABELS[item.difficulty]}</time>
+      `;
+      dashPlanList.appendChild(li);
+    });
+  }
+
+  dashPlanList?.addEventListener('click', (e) => {
+    const row = e.target.closest('.dash-task');
+    if (!row?.dataset.id) return;
+    if (e.target.closest('.dash-task-check')) {
+      togglePlanItem(row.dataset.id);
+    }
+  });
+
   focusMode.subscribe(syncFocusUI);
+  window.addEventListener('chronos:productivity', syncProductivityUI);
+  syncProductivityUI();
 }

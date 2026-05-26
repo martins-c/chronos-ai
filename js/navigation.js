@@ -6,6 +6,8 @@
 const VIEW_IDS = {
   home: 'viewDashboard',
   chat: 'viewChat',
+  plano: 'viewPlano',
+  tarefas: 'viewTarefas',
   placeholder: 'viewPlaceholder',
 };
 
@@ -14,6 +16,8 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
   const views = {
     home: document.getElementById(VIEW_IDS.home),
     chat: document.getElementById(VIEW_IDS.chat),
+    plano: document.getElementById(VIEW_IDS.plano),
+    tarefas: document.getElementById(VIEW_IDS.tarefas),
     placeholder: document.getElementById(VIEW_IDS.placeholder),
   };
 
@@ -40,7 +44,17 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
       return;
     }
 
-    if (['plano', 'tarefas', 'uploads', 'analytics'].includes(view)) {
+    if (view === 'plano' || view === 'tarefas') {
+      currentView = view;
+      setNavActive(view);
+      showOnly(view);
+      elements.sidebarChatPanel?.classList.remove('is-visible');
+      ui.closeSidebar();
+      onViewChange?.(view);
+      return;
+    }
+
+    if (['uploads', 'analytics'].includes(view)) {
       if (elements.placeholderTitle) {
         elements.placeholderTitle.textContent = options.title || 'Em breve';
       }
@@ -84,8 +98,6 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
   }
 
   const PLACEHOLDER_META = {
-    plano: { title: 'Plano do Dia', subtitle: 'Organize seu dia com blocos inteligentes de estudo.' },
-    tarefas: { title: 'Tarefas', subtitle: 'Lista de tarefas conectada ao seu ritmo acadêmico.' },
     uploads: { title: 'Uploads', subtitle: 'Envie materiais e deixe a Chronos interpretar.' },
     analytics: { title: 'Análises', subtitle: 'Métricas de foco e produtividade em tempo real.' },
   };

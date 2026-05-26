@@ -24,6 +24,7 @@ nod<!DOCTYPE html>
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/focus.css">
   <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/productivity.css">
 
   <!-- Favicon (inline SVG as data URI) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%230a0a0f' stroke='%2300f5ff' stroke-width='1.5'/><text x='16' y='21' text-anchor='middle' font-size='16' fill='%2300f5ff'>⚡</text></svg>">
@@ -217,11 +218,8 @@ nod<!DOCTYPE html>
                 <h3 class="dash-card-title">Plano do Dia</h3>
                 <button type="button" class="dash-card-action" data-view-link="plano">Ver tudo</button>
               </div>
-              <ul class="dash-task-list">
-                <li class="dash-task done"><span class="dash-task-check"></span><span>Revisão de Cálculo</span><time class="dash-task-time">08:00</time></li>
-                <li class="dash-task"><span class="dash-task-check"></span><span>Lista de Física — cap. 4</span><time class="dash-task-time">14:00</time></li>
-                <li class="dash-task"><span class="dash-task-check"></span><span>Redação ENEM (rascunho)</span><time class="dash-task-time">19:30</time></li>
-              </ul>
+              <ul class="dash-task-list" id="dashPlanList"></ul>
+              <p class="dash-plan-empty hidden" id="dashPlanEmpty">Nenhuma prioridade para hoje. Adicione no Plano do Dia.</p>
             </article>
 
             <article class="dash-card dash-card--stats">
@@ -233,7 +231,7 @@ nod<!DOCTYPE html>
                 <div class="dash-stat"><div class="dash-stat-value" id="dashStatFocusToday">0m</div><div class="dash-stat-label">Foco hoje</div></div>
                 <div class="dash-stat"><div class="dash-stat-value">87%</div><div class="dash-stat-label">Produtividade</div></div>
                 <div class="dash-stat"><div class="dash-stat-value" id="dashStatSessions">0</div><div class="dash-stat-label">Sessões</div></div>
-                <div class="dash-stat"><div class="dash-stat-value">+12%</div><div class="dash-stat-label">vs ontem</div></div>
+                <div class="dash-stat"><div class="dash-stat-value" id="dashStatTasksDone">0</div><div class="dash-stat-label">Tarefas feitas</div></div>
               </div>
             </article>
 
@@ -384,7 +382,98 @@ nod<!DOCTYPE html>
 
       </section>
 
-      <!-- ━━━ Placeholder modules (Phase 2) ━━━ -->
+      <!-- ━━━ Plano do Dia ━━━ -->
+      <section class="app-view view-productivity" id="viewPlano" aria-label="Plano do Dia">
+        <header class="prod-page-header">
+          <button type="button" class="btn-icon btn-menu js-menu-toggle" aria-label="Abrir menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="prod-page-heading">
+            <h1>Plano do Dia</h1>
+            <p id="planDateLabel">Suas prioridades de hoje</p>
+          </div>
+          <span class="prod-page-meta" id="planCount">—</span>
+        </header>
+        <div class="prod-body">
+          <div class="prod-form-card">
+            <h2>Nova prioridade</h2>
+            <form class="prod-form" id="planForm">
+              <div class="prod-field">
+                <label for="planTitle">Título</label>
+                <input type="text" id="planTitle" name="title" placeholder="Ex: Revisar capítulo 4 de Física" required maxlength="120" />
+              </div>
+              <div class="prod-form-row">
+                <div class="prod-field">
+                  <label for="planMinutes">Tempo estimado</label>
+                  <input type="number" id="planMinutes" name="minutes" value="30" min="5" max="480" step="5" />
+                </div>
+                <div class="prod-field">
+                  <label for="planDifficulty">Dificuldade</label>
+                  <select id="planDifficulty" name="difficulty">
+                    <option value="low">Baixa</option>
+                    <option value="medium" selected>Média</option>
+                    <option value="high">Alta</option>
+                  </select>
+                </div>
+              </div>
+              <div class="prod-field">
+                <label for="planCategory">Categoria</label>
+                <select id="planCategory" name="category">
+                  <option value="study">Estudo</option>
+                  <option value="work">Trabalho</option>
+                  <option value="personal">Pessoal</option>
+                </select>
+              </div>
+              <button type="submit" class="prod-submit">Adicionar ao plano</button>
+            </form>
+          </div>
+          <ul class="prod-list" id="planList"></ul>
+          <div class="prod-empty hidden" id="planEmpty">
+            <div class="prod-empty-icon">📋</div>
+            <h3>Seu plano está vazio</h3>
+            <p>Defina as prioridades de hoje para manter o ritmo acadêmico.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ━━━ Tarefas ━━━ -->
+      <section class="app-view view-productivity" id="viewTarefas" aria-label="Tarefas">
+        <header class="prod-page-header">
+          <button type="button" class="btn-icon btn-menu js-menu-toggle" aria-label="Abrir menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="prod-page-heading">
+            <h1>Tarefas</h1>
+            <p>Organize e conclua no seu ritmo</p>
+          </div>
+          <span class="prod-page-meta" id="tasksCount">—</span>
+        </header>
+        <div class="prod-body">
+          <div class="prod-form-card">
+            <h2>Nova tarefa</h2>
+            <form class="prod-form" id="tasksForm">
+              <div class="prod-field">
+                <label for="taskTitle">Título</label>
+                <input type="text" id="taskTitle" name="title" placeholder="Ex: Entregar trabalho de história" required maxlength="120" />
+              </div>
+              <button type="submit" class="prod-submit">Adicionar tarefa</button>
+            </form>
+          </div>
+          <div class="prod-filters">
+            <button type="button" class="prod-filter active" data-tasks-filter="all">Todas</button>
+            <button type="button" class="prod-filter" data-tasks-filter="active">Pendentes</button>
+            <button type="button" class="prod-filter" data-tasks-filter="done">Concluídas</button>
+          </div>
+          <ul class="prod-list" id="tasksList"></ul>
+          <div class="prod-empty hidden" id="tasksEmpty">
+            <div class="prod-empty-icon">✓</div>
+            <h3>Nenhuma tarefa aqui</h3>
+            <p>Crie tarefas para acompanhar tudo que precisa fazer.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ━━━ Placeholder modules ━━━ -->
       <section class="app-view view-placeholder" id="viewPlaceholder" aria-label="Módulo em desenvolvimento">
         <button type="button" class="btn-icon btn-menu js-menu-toggle" style="position:absolute;top:var(--space-4);left:var(--space-4);z-index:2" aria-label="Abrir menu">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
