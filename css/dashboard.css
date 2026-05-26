@@ -351,9 +351,10 @@
   stroke: url(#dashRingGradient);
   stroke-width: 6;
   stroke-linecap: round;
-  stroke-dasharray: 283;
-  stroke-dashoffset: 70;
+  stroke-dasharray: 282.743;
+  stroke-dashoffset: 0;
   filter: drop-shadow(0 0 8px rgba(var(--color-primary-rgb), 0.5));
+  transition: stroke-dashoffset 0.4s var(--ease-out);
 }
 
 .dash-focus-time {

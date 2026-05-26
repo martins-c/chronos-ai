@@ -193,7 +193,7 @@ nod<!DOCTYPE html>
             <article class="dash-card dash-card--focus">
               <div class="dash-card-head">
                 <h3 class="dash-card-title">Modo Foco</h3>
-                <span class="dash-card-badge">Ativo</span>
+                <span class="dash-card-badge" id="dashFocusBadge">Pronto</span>
               </div>
               <div class="dash-focus-ring" aria-hidden="true">
                 <svg viewBox="0 0 100 100">
@@ -206,9 +206,9 @@ nod<!DOCTYPE html>
                   <circle class="dash-focus-ring-bg" cx="50" cy="50" r="45" />
                   <circle class="dash-focus-ring-progress" cx="50" cy="50" r="45" />
                 </svg>
-                <span class="dash-focus-time">24:59</span>
+                <span class="dash-focus-time" id="dashFocusTime">25:00</span>
               </div>
-              <p class="dash-focus-meta">Sessão profunda · 25 min</p>
+              <p class="dash-focus-meta" id="dashFocusMeta">Sessão profunda · 25 min</p>
               <button type="button" class="btn-start" style="width:100%;margin-top:var(--space-4)" data-action="open-focus">Entrar no Modo Foco</button>
             </article>
 
@@ -230,9 +230,9 @@ nod<!DOCTYPE html>
                 <span class="dash-card-badge">Demo</span>
               </div>
               <div class="dash-stats">
-                <div class="dash-stat"><div class="dash-stat-value">4h 12m</div><div class="dash-stat-label">Foco hoje</div></div>
+                <div class="dash-stat"><div class="dash-stat-value" id="dashStatFocusToday">0m</div><div class="dash-stat-label">Foco hoje</div></div>
                 <div class="dash-stat"><div class="dash-stat-value">87%</div><div class="dash-stat-label">Produtividade</div></div>
-                <div class="dash-stat"><div class="dash-stat-value">3</div><div class="dash-stat-label">Sessões</div></div>
+                <div class="dash-stat"><div class="dash-stat-value" id="dashStatSessions">0</div><div class="dash-stat-label">Sessões</div></div>
                 <div class="dash-stat"><div class="dash-stat-value">+12%</div><div class="dash-stat-label">vs ontem</div></div>
               </div>
             </article>
@@ -430,8 +430,14 @@ nod<!DOCTYPE html>
     <div class="focus-panel" role="dialog" aria-labelledby="focusTitle" aria-modal="true">
       <h2 class="focus-title" id="focusTitle">Modo Foco Ativado</h2>
       <p class="focus-subtitle">Seu futuro está sendo construído agora.</p>
-      <div class="focus-timer" aria-label="Tempo restante">24:59</div>
-      <span class="focus-timer-label">Sessão de foco</span>
+      <div class="focus-timer" id="focusTimer" aria-live="polite" aria-label="Tempo restante">25:00</div>
+      <span class="focus-timer-label" id="focusTimerLabel">Pronto para começar</span>
+
+      <div class="focus-controls">
+        <button type="button" class="focus-btn focus-btn--primary" id="btnFocusPrimary" data-action="start">Iniciar</button>
+        <button type="button" class="focus-btn focus-btn--ghost" id="btnFocusReset">Reiniciar</button>
+        <button type="button" class="focus-btn focus-btn--ghost" id="btnFocusFinish">Finalizar</button>
+      </div>
     </div>
   </div>
 

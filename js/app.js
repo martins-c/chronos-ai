@@ -68,6 +68,11 @@ const elements = {
   btnFocus: document.getElementById('btnFocus'),
   focusOverlay: document.getElementById('focusOverlay'),
   btnFocusClose: document.getElementById('btnFocusClose'),
+  focusTimer: document.getElementById('focusTimer'),
+  focusTimerLabel: document.getElementById('focusTimerLabel'),
+  btnFocusPrimary: document.getElementById('btnFocusPrimary'),
+  btnFocusReset: document.getElementById('btnFocusReset'),
+  btnFocusFinish: document.getElementById('btnFocusFinish'),
 
   // Modal
   apiKeyModal: document.getElementById('apiKeyModal'),
@@ -83,7 +88,7 @@ const elements = {
 
 const ui = new UIManager(elements);
 const chat = new ChatManager(elements);
-const focusMode = initFocusMode(elements);
+const focusMode = initFocusMode({ elements, ui });
 
 const navigation = initNavigation({
   elements,

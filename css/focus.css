@@ -274,12 +274,75 @@
 .focus-timer-label {
   display: block;
   margin-top: var(--space-4);
+  margin-bottom: var(--space-8);
   font-family: var(--font-body);
   font-size: var(--text-xs);
   font-weight: 500;
   letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
   color: var(--color-text-muted);
+}
+
+/* ━━━ Timer controls ━━━ */
+.focus-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.focus-btn {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+  transition:
+    color var(--duration-normal) var(--ease-out),
+    background var(--duration-normal) var(--ease-out),
+    border-color var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
+}
+
+.focus-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.focus-btn--primary {
+  color: var(--color-bg);
+  background: linear-gradient(135deg, var(--color-primary), #00c4cc);
+  border-color: rgba(var(--color-primary-rgb), 0.5);
+  box-shadow: var(--shadow-glow-primary);
+  min-width: 140px;
+}
+
+.focus-btn--primary:hover:not(:disabled) {
+  box-shadow: 0 0 24px rgba(var(--color-primary-rgb), 0.45);
+  transform: translateY(-1px);
+}
+
+.focus-btn--primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.focus-btn--ghost {
+  color: var(--color-text-secondary);
+  background: var(--glass-bg);
+  border-color: var(--color-border);
+}
+
+.focus-btn--ghost:hover:not(:disabled) {
+  color: var(--color-primary);
+  border-color: rgba(var(--color-primary-rgb), 0.35);
+  background: var(--color-primary-subtle);
 }
 
 /* Mobile: compact header trigger */
