@@ -402,6 +402,78 @@ function bindEvents() {
       }
     }
   });
+  // =========================
+// EARLY ACCESS LOGIN
+// =========================
+
+const earlyAccessScreen = document.getElementById("earlyAccessScreen");
+const enterChronosBtn = document.getElementById("enterChronosBtn");
+const earlyAccessName = document.getElementById("earlyAccessName");
+const appContainer = document.getElementById("app");
+
+const SAVED_USER_KEY = "chronos_user";
+
+function enterChronos(name) {
+  const username = name?.trim() || "Estudante";
+
+  localStorage.setItem(
+    SAVED_USER_KEY,
+    JSON.stringify({
+      name: username
+    })
+  );
+
+  earlyAccessScreen.style.display = "none";
+
+  appContainer.classList.remove("hidden");
+
+  updateChronosUsername(username);
+}
+
+function updateChronosUsername(name) {
+
+  const heroTitle = document.querySelector(".hero-title");
+
+  if (heroTitle) {
+    heroTitle.innerHTML =
+      `Boa noite, ${name} ⚡`;
+  }
+}
+
+function loadChronosUser() {
+
+  const savedUser = localStorage.getItem(SAVED_USER_KEY);
+
+  if (!savedUser) return;
+
+  try {
+
+    const user = JSON.parse(savedUser);
+
+    earlyAccessScreen.style.display = "none";
+
+    appContainer.classList.remove("hidden");
+
+    updateChronosUsername(user.name);
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+enterChronosBtn?.addEventListener("click", () => {
+  enterChronos(earlyAccessName.value);
+});
+
+earlyAccessName?.addEventListener("keydown", (e) => {
+
+  if (e.key === "Enter") {
+    enterChronos(earlyAccessName.value);
+  }
+
+});
+
+loadChronosUser();
 }
 
 // ━━━ Launch ━━━

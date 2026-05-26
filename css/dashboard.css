@@ -21,6 +21,23 @@
   display: flex;
   flex: 1;
   min-height: 0;
+  animation: viewFadeIn var(--duration-slower) var(--ease-out) both;
+  will-change: opacity, transform;
+}
+
+.app-view--active {
+  transform: translateY(0);
+}
+
+@keyframes viewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .view-dashboard {
@@ -715,6 +732,45 @@
 /* Chat view fills workspace */
 .view-chat {
   min-height: 0;
+}
+
+/* ━━━ Mobile polish ━━━ */
+@media (max-width: 480px) {
+  .sidebar-nav {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+  }
+
+  .dash-header {
+    padding: var(--space-4) var(--space-4) var(--space-3);
+  }
+
+  .dash-body {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .dash-grid {
+    gap: var(--space-3);
+  }
+
+  .dash-card {
+    padding: var(--space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-view--active {
+    animation: none;
+  }
+
+  .dash-card,
+  .dash-card::before {
+    transition: none !important;
+  }
+
+  .dash-particle {
+    animation: none !important;
+  }
 }
 
 .view-chat .chat-header,

@@ -2,10 +2,6 @@
    CHRONOS AI — Plano do Dia + Tarefas
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
-.hidden {
-  display: none !important;
-}
-
 .view-productivity {
   overflow-y: auto;
   min-height: 0;
@@ -387,4 +383,31 @@
 
 .dash-plan-empty.hidden {
   display: none;
+}
+
+/* ━━━ Mobile polish ━━━ */
+@media (max-width: 480px) {
+  .prod-page-header {
+    padding: var(--space-4) var(--space-4) var(--space-3);
+  }
+
+  .prod-body {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .prod-form-card {
+    padding: var(--space-4);
+  }
+
+  .prod-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .prod-submit {
+    width: 100%;
+  }
+
+  .prod-filters {
+    gap: var(--space-2);
+  }
 }

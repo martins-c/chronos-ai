@@ -365,3 +365,45 @@
     font-size: var(--text-xl);
   }
 }
+
+@media (max-width: 480px) {
+  .focus-panel {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .focus-controls {
+    gap: var(--space-2);
+  }
+
+  .focus-btn {
+    padding: var(--space-2) var(--space-4);
+    min-width: 0;
+  }
+
+  .focus-btn--primary {
+    min-width: 0;
+  }
+
+  .focus-overlay.active .focus-particle {
+    opacity: 0.28;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-overlay,
+  .focus-panel,
+  .focus-timer {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .focus-glow--center,
+  .focus-glow--top,
+  .focus-glow--bottom {
+    animation: none !important;
+  }
+
+  .focus-particle {
+    animation: none !important;
+  }
+}

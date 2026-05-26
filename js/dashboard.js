@@ -3,14 +3,14 @@
 //  Focus sync + plan preview + task stats
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-const RING_CIRCUMFERENCE = 2 * Math.PI * 45;
-
 import {
   getProductivityStats,
   togglePlanItem,
   formatMinutes,
   DIFFICULTY_LABELS,
 } from './productivity-storage.js';
+
+const RING_CIRCUMFERENCE = 2 * Math.PI * 45;
 
 function escapeHtml(text) {
   const div = document.createElement('div');
