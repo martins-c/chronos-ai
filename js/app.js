@@ -477,6 +477,27 @@ earlyAccessName?.addEventListener("keydown", (e) => {
 
 loadChronosUser();
 }
+const enterChronosBtn = document.getElementById("enterChronosBtn");
+const earlyAccessName = document.getElementById("earlyAccessName");
+const earlyAccessScreen = document.getElementById("earlyAccessScreen");
+const appContainer = document.getElementById("app");
+
+function enterChronos(name) {
+  const username = name?.trim() || "Estudante";
+
+  localStorage.setItem("chronos_user", JSON.stringify({ name: username }));
+
+  if (earlyAccessScreen) earlyAccessScreen.style.display = "none";
+  if (appContainer) appContainer.style.display = "flex";
+
+  document.querySelectorAll("[data-username], .username, #username").forEach((el) => {
+    el.textContent = username;
+  });
+}
+
+enterChronosBtn?.addEventListener("click", () => {
+  enterChronos(earlyAccessName?.value);
+});
 
 // ━━━ Launch ━━━
 init();

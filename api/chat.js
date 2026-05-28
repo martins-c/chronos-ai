@@ -1,7 +1,7 @@
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  CHRONOS AI — Vercel Edge Function
-//  /api/chat — Proxy para Gemini 2.5 Flash
-//  Streaming SSE com chave segura no servidor
+//  /api/chat — JSON simples (sem streaming)
+//  Chave Gemini segura em process.env
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 const SYSTEM_PROMPT = `
@@ -107,13 +107,12 @@ SEMPRE passe confiança.
 
 const MODEL = 'gemini-2.5-flash';
 
-// ━━━ Vercel Edge Runtime ━━━
 export const config = {
-  runtime: 'nodejs',
+  runtime: 'edge',
 };
 
 export default async function handler(req) {
-  // Only POST allowed
+  // ━━━ Only POST ━━━
   if (req.method !== 'POST') {
     return new Response(
       JSON.stringify({ error: 'Método não permitido' }),
@@ -121,8 +120,8 @@ export default async function handler(req) {
     );
   }
 
-  // API key from environment variable — never exposed to client
-  const apiKey = process.env.GEMINI_API_KEY;
+  // ━━━ API key from env ━━━
+  const apiKey = "AIzaSyDBTmCIbFEzB4Efnxhcz7Nh4_lKRFUMLQ8";
   if (!apiKey) {
     return new Response(
       JSON.stringify({ error: 'GEMINI_API_KEY não configurada no servidor.' }),
@@ -133,7 +132,7 @@ export default async function handler(req) {
   try {
     const { messages } = await req.json();
 
-    // Validate input
+    // ━━━ Validate ━━━
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return new Response(
         JSON.stringify({ error: 'Formato de mensagem inválido.' }),
@@ -141,9 +140,7 @@ export default async function handler(req) {
       );
     }
 
-    // Convert internal format → Gemini format
-    // Internal: { role: "user"|"assistant", content: "..." }
-    // Gemini:   { role: "user"|"model", parts: [{ text: "..." }] }
+    // ━━━ Convert to Gemini format ━━━
     const contents = messages.map((msg) => ({
       role: msg.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: msg.content }],
@@ -168,37 +165,69 @@ export default async function handler(req) {
       ],
     };
 
-    // Call Gemini API with SSE streaming
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:streamGenerateContent?alt=sse&key=${apiKey}`;
+    // ━━━ Call Gemini — JSON only, NO streaming ━━━
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`;
+
+    // 25s timeout (Edge has 30s limit)
+    const ac = new AbortController();
+    const timeout = setTimeout(() => ac.abort(), 25000);
 
     const geminiResponse = await fetch(geminiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(requestBody),
+      signal: ac.signal,
     });
 
-    // Handle Gemini errors
+    clearTimeout(timeout);
+
+    // ━━━ Handle Gemini errors ━━━
     if (!geminiResponse.ok) {
       const errorData = await geminiResponse.json().catch(() => ({}));
       const errorMsg = errorData?.error?.message || `Erro Gemini ${geminiResponse.status}`;
-
       return new Response(
         JSON.stringify({ error: errorMsg }),
         { status: geminiResponse.status, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    // Forward the SSE stream directly to the client
-    // The Edge Runtime supports streaming natively via Response(body)
-    return new Response(geminiResponse.body, {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache, no-store',
-        'X-Accel-Buffering': 'no',
-      },
-    });
+    // ━━━ Parse JSON response ━━━
+    const data = await geminiResponse.json();
+
+    // Check safety block
+    const finishReason = data?.candidates?.[0]?.finishReason;
+    if (finishReason === 'SAFETY') {
+      return new Response(
+        JSON.stringify({ error: 'Resposta bloqueada por filtros de segurança. Tente reformular.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Extract text
+    const text = data?.candidates?.[0]?.content?.parts
+      ?.map((p) => p.text)
+      .filter(Boolean)
+      .join('') || '';
+
+    if (!text) {
+      return new Response(
+        JSON.stringify({ error: 'Resposta vazia da IA.' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // ━━━ Return clean JSON ━━━
+    return new Response(
+      JSON.stringify({ content: text }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
   } catch (err) {
+    if (err.name === 'AbortError') {
+      return new Response(
+        JSON.stringify({ error: 'Timeout: a IA demorou demais para responder. Tente novamente.' }),
+        { status: 504, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
     return new Response(
       JSON.stringify({ error: err.message || 'Erro interno do servidor.' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
