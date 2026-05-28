@@ -121,7 +121,7 @@ export default async function handler(req) {
   }
 
   // ━━━ API key from env ━━━
-  const apiKey = "AIzaSyDBTmCIbFEzB4Efnxhcz7Nh4_lKRFUMLQ8";
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return new Response(
       JSON.stringify({ error: 'GEMINI_API_KEY não configurada no servidor.' }),
