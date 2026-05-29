@@ -30,14 +30,9 @@ import { initTasksView } from './tasks.js';
 // ━━━ DOM References ━━━
 
 const elements = {
-  // Welcome
   welcomeScreen: document.getElementById('welcomeScreen'),
   btnStart: document.getElementById('btnStart'),
-
-  // App
   app: document.getElementById('app'),
-
-  // Sidebar
   sidebar: document.getElementById('sidebar'),
   sidebarNav: document.getElementById('sidebarNav'),
   sidebarChatPanel: document.getElementById('sidebarChatPanel'),
@@ -47,26 +42,16 @@ const elements = {
   btnMenu: document.getElementById('btnMenu'),
   btnNewChat: document.getElementById('btnNewChat'),
   btnClearHistory: document.getElementById('btnClearHistory'),
-
-  // Placeholder view
   placeholderTitle: document.getElementById('placeholderTitle'),
   placeholderSubtitle: document.getElementById('placeholderSubtitle'),
-
-  // Chat
   chatMessages: document.getElementById('chatMessages'),
   chatMessagesInner: document.getElementById('chatMessagesInner'),
   emptyState: document.getElementById('emptyState'),
   quickActions: document.getElementById('quickActions'),
-
-  // Input
   inputContainer: document.getElementById('inputContainer'),
   messageInput: document.getElementById('messageInput'),
   btnSend: document.getElementById('btnSend'),
-
-  // Settings
   btnSettings: document.getElementById('btnSettings'),
-
-  // Focus mode
   btnFocus: document.getElementById('btnFocus'),
   focusOverlay: document.getElementById('focusOverlay'),
   btnFocusClose: document.getElementById('btnFocusClose'),
@@ -75,14 +60,10 @@ const elements = {
   btnFocusPrimary: document.getElementById('btnFocusPrimary'),
   btnFocusReset: document.getElementById('btnFocusReset'),
   btnFocusFinish: document.getElementById('btnFocusFinish'),
-
-  // Modal
   apiKeyModal: document.getElementById('apiKeyModal'),
   apiKeyInput: document.getElementById('apiKeyInput'),
   btnModalCancel: document.getElementById('btnModalCancel'),
   btnModalSave: document.getElementById('btnModalSave'),
-
-  // Toast
   toast: document.getElementById('toast'),
 };
 
@@ -118,7 +99,6 @@ let currentAbortController = null;
 // ━━━ Initialization ━━━
 
 function init() {
-  // Check if user has been welcomed
   if (hasBeenWelcomed()) {
     ui.hideWelcome();
     loadLastConversation();
@@ -144,7 +124,6 @@ function loadLastConversation() {
     }
   }
 
-  // No active conversation — show empty state
   currentConversation = null;
   chat.clearMessages();
   ui.showEmptyState();
@@ -170,7 +149,6 @@ function loadConversation(convo) {
 // ━━━ New Conversation ━━━
 
 function startNewConversation() {
-  // Abort any ongoing stream
   if (currentAbortController) {
     currentAbortController.abort();
     currentAbortController = null;
@@ -193,20 +171,16 @@ async function handleSendMessage(text) {
 
   const trimmedText = text.trim();
 
-  // Create conversation if needed
   if (!currentConversation) {
     currentConversation = createConversation();
-    // Set title from first message
     currentConversation.title =
       trimmedText.length > 50
         ? trimmedText.substring(0, 50) + '...'
         : trimmedText;
   }
 
-  // Hide empty state
   ui.hideEmptyState();
 
-  // Add user message
   const userMessage = {
     role: 'user',
     content: trimmedText,
@@ -216,25 +190,20 @@ async function handleSendMessage(text) {
   saveConversation(currentConversation);
   refreshChatList();
 
-  // Render user message
   chat.renderMessage(userMessage);
   chat.scrollToBottom();
 
-  // Clear input
   ui.resetInput(elements.messageInput);
   ui.updateSendButton(false);
 
-  // Show typing indicator
   chat.showTypingIndicator();
   ui.setInputDisabled(true);
 
-  // Prepare messages for API (only role + content)
   const apiMessages = currentConversation.messages.map((m) => ({
     role: m.role,
     content: m.content,
   }));
 
-  // Start streaming
   chat.removeTypingIndicator();
   chat.startStreaming();
 
@@ -276,7 +245,6 @@ function refreshChatList() {
 // ━━━ Event Binding ━━━
 
 function bindEvents() {
-  // Welcome — Start button
   elements.btnStart.addEventListener('click', () => {
     setWelcomed();
     ui.hideWelcome();
@@ -286,13 +254,11 @@ function bindEvents() {
 
   elements.sidebarOverlay.addEventListener('click', () => ui.closeSidebar());
 
-  // Sidebar — New chat
   elements.btnNewChat.addEventListener('click', () => {
     navigation.setView('chat');
     startNewConversation();
   });
 
-  // Sidebar — Clear history
   elements.btnClearHistory.addEventListener('click', () => {
     if (confirm('Tem certeza que deseja limpar todo o histórico?')) {
       clearAllConversations();
@@ -301,24 +267,17 @@ function bindEvents() {
     }
   });
 
-  // Sidebar — Click chat item or delete
   elements.sidebarChats.addEventListener('click', (e) => {
-    // Delete button
     const deleteBtn = e.target.closest('.chat-item-delete');
     if (deleteBtn) {
       e.stopPropagation();
       const id = deleteBtn.dataset.deleteId;
       deleteConversation(id);
-
-      if (currentConversation?.id === id) {
-        startNewConversation();
-      }
-
+      if (currentConversation?.id === id) startNewConversation();
       refreshChatList();
       return;
     }
 
-    // Chat item click
     const item = e.target.closest('.chat-item');
     if (item) {
       const convo = getConversation(item.dataset.id);
@@ -330,7 +289,6 @@ function bindEvents() {
     }
   });
 
-  // Quick actions (chips)
   elements.quickActions.addEventListener('click', (e) => {
     const chip = e.target.closest('.chip');
     if (chip) {
@@ -344,13 +302,11 @@ function bindEvents() {
     }
   });
 
-  // Input — typing
   elements.messageInput.addEventListener('input', () => {
     ui.autoResizeInput(elements.messageInput);
     ui.updateSendButton(elements.messageInput.value.trim().length > 0);
   });
 
-  // Input — Enter to send (Shift+Enter for new line)
   elements.messageInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -358,39 +314,33 @@ function bindEvents() {
     }
   });
 
-  // Send button
   elements.btnSend.addEventListener('click', () => {
     handleSendMessage(elements.messageInput.value);
   });
 
-  // Settings — API Key modal
-  elements.btnSettings.addEventListener('click', () => {
-    ui.showApiKeyModal();
+  elements.btnSettings?.addEventListener('click', () => {
+    ui.showApiKeyModal?.();
   });
-
-  elements.btnModalCancel.addEventListener('click', () => {
-    ui.hideApiKeyModal();
+  
+  elements.btnModalCancel?.addEventListener('click', () => {
+    ui.hideApiKeyModal?.();
   });
-
-  elements.btnModalSave.addEventListener('click', () => {
-    const key = ui.getApiKeyFromModal();
+  
+  elements.btnModalSave?.addEventListener('click', () => {
+    const key = ui.getApiKeyFromModal?.();
     if (key) {
       saveSettings({ apiKey: key });
-      ui.hideApiKeyModal();
+      ui.hideApiKeyModal?.();
       ui.showToast('Chave salva com sucesso! ✓');
     } else {
       ui.showToast('Insira uma chave válida', 'error');
     }
   });
-
-  // Modal — Enter to save
-  elements.apiKeyInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      elements.btnModalSave.click();
-    }
+  
+  elements.apiKeyInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') elements.btnModalSave?.click();
   });
 
-  // Escape — close focus/modal/sidebar
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if (focusMode.isOpen()) {
@@ -402,102 +352,49 @@ function bindEvents() {
       }
     }
   });
-  // =========================
-// EARLY ACCESS LOGIN
-// =========================
 
-const earlyAccessScreen = document.getElementById("earlyAccessScreen");
-const enterChronosBtn = document.getElementById("enterChronosBtn");
-const earlyAccessName = document.getElementById("earlyAccessName");
-const appContainer = document.getElementById("app");
+  // ━━━ Early Access Login ━━━
 
-const SAVED_USER_KEY = "chronos_user";
+  const SAVED_USER_KEY = 'chronos_user';
+  const earlyAccessScreen = document.getElementById('earlyAccessScreen');
+  const enterChronosBtn = document.getElementById('enterChronosBtn');
+  const earlyAccessName = document.getElementById('earlyAccessName');
+  const appContainer = document.getElementById('app');
 
-function enterChronos(name) {
-  const username = name?.trim() || "Estudante";
-
-  localStorage.setItem(
-    SAVED_USER_KEY,
-    JSON.stringify({
-      name: username
-    })
-  );
-
-  earlyAccessScreen.style.display = "none";
-  document.body.style.overflow = "hidden";
-
-  appContainer.style.display = "flex";
-  document.body.style.overflow = "auto";
-
-  updateChronosUsername(username);
-}
-
-function updateChronosUsername(name) {
-
-  const heroTitle = document.querySelector(".hero-title");
-
-  if (heroTitle) {
-    heroTitle.innerHTML =
-      `Boa noite, ${name} ⚡`;
-  }
-}
-
-function loadChronosUser() {
-
-  const savedUser = localStorage.getItem(SAVED_USER_KEY);
-
-  if (!savedUser) return;
-
-  try {
-
-    const user = JSON.parse(savedUser);
-
-    earlyAccessScreen.style.display = "none";
-
-    appContainer.style.display = "flex";
-
-    updateChronosUsername(user.name);
-
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-enterChronosBtn?.addEventListener("click", () => {
-  enterChronos(earlyAccessName.value);
-});
-
-earlyAccessName?.addEventListener("keydown", (e) => {
-
-  if (e.key === "Enter") {
-    enterChronos(earlyAccessName.value);
+  function updateChronosUsername(name) {
+    const heroTitle = document.querySelector('.hero-title');
+    if (heroTitle) heroTitle.innerHTML = `Boa noite, ${name} ⚡`;
   }
 
-});
+  function enterChronos(name) {
+    const username = name?.trim() || 'Estudante';
+    localStorage.setItem(SAVED_USER_KEY, JSON.stringify({ name: username }));
+    if (earlyAccessScreen) earlyAccessScreen.style.display = 'none';
+    if (appContainer) appContainer.style.display = 'flex';
+    document.body.style.overflow = 'auto';
+    updateChronosUsername(username);
+  }
 
-loadChronosUser();
-}
-const enterChronosBtn = document.getElementById("enterChronosBtn");
-const earlyAccessName = document.getElementById("earlyAccessName");
-const earlyAccessScreen = document.getElementById("earlyAccessScreen");
-const appContainer = document.getElementById("app");
+  function loadChronosUser() {
+    const savedUser = localStorage.getItem(SAVED_USER_KEY);
+    if (!savedUser) return;
+    try {
+      const user = JSON.parse(savedUser);
+      if (earlyAccessScreen) earlyAccessScreen.style.display = 'none';
+      if (appContainer) appContainer.style.display = 'flex';
+      updateChronosUsername(user.name);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
-function enterChronos(name) {
-  const username = name?.trim() || "Estudante";
-
-  localStorage.setItem("chronos_user", JSON.stringify({ name: username }));
-
-  if (earlyAccessScreen) earlyAccessScreen.style.display = "none";
-  if (appContainer) appContainer.style.display = "flex";
-
-  document.querySelectorAll("[data-username], .username, #username").forEach((el) => {
-    el.textContent = username;
+  enterChronosBtn?.addEventListener('click', () => enterChronos(earlyAccessName?.value));
+  earlyAccessName?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') enterChronos(earlyAccessName.value);
   });
-}
 
-enterChronosBtn?.addEventListener("click", () => {
-  enterChronos(earlyAccessName?.value);
-});
+  loadChronosUser();
+}
 
 // ━━━ Launch ━━━
 init();

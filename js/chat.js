@@ -200,7 +200,9 @@ export class ChatManager {
       timeEl.className = 'message-time';
       timeEl.textContent = this._formatTime(Date.now());
       this._streamingEl.querySelector('.message-content').appendChild(timeEl);
-    }
+   // No final de finishStreaming(), após adicionar o timeEl:
+this._appendFeedbackWidget(this._streamingEl);
+ }
 
     this._streamingBubble = null;
     this._streamingEl = null;
@@ -292,5 +294,32 @@ export class ChatManager {
 
   _getUserInitial() {
     return '👤';
+  }
+  _appendFeedbackWidget(messageEl) {
+    // Só mostra a cada 3 respostas da IA
+    this._feedbackCount = (this._feedbackCount || 0) + 1;
+    if (this._feedbackCount % 3 !== 0) return;
+  
+    const TALLY_URL = 'https://tally.so/r/SUBSTITUA_AQUI'; // ← cole seu link aqui
+  
+    const widget = document.createElement('div');
+    widget.className = 'feedback-widget';
+    widget.innerHTML = `
+      <span class="feedback-label">Essa resposta te ajudou?</span>
+      <div class="feedback-actions">
+        <button class="feedback-btn" data-value="sim">👍 Sim</button>
+        <button class="feedback-btn" data-value="nao">👎 Não</button>
+        <a class="feedback-link" href="${TALLY_URL}" target="_blank">Deixar feedback completo →</a>
+      </div>
+    `;
+  
+    // Comportamento dos botões rápidos
+    widget.querySelectorAll('.feedback-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        widget.innerHTML = `<span class="feedback-label" style="opacity:0.5;">Obrigado pelo feedback ✓</span>`;
+      });
+    });
+  
+    messageEl.querySelector('.message-content').appendChild(widget);
   }
 }
