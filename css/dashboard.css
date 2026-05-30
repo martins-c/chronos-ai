@@ -764,15 +764,15 @@
   }
 
   /* Timer menor */
-  .dash-focus-ring {
-    width: 100px;
-    height: 100px;
-    margin: var(--space-1) auto var(--space-3);
-  }
+.dash-focus-ring {
+  width: 100px !important;
+  height: 100px !important;
+  margin: var(--space-1) auto var(--space-3);
+}
 
-  .dash-focus-time {
-    font-size: var(--text-lg);
-  }
+.dash-focus-time {
+  font-size: var(--text-lg) !important;
+}
 
   /* Cards mais compactos */
   .dash-body {
