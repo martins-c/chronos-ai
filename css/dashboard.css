@@ -741,12 +741,42 @@
     padding-right: var(--space-2);
   }
 
+  /* Header compacto */
   .dash-header {
-    padding: var(--space-4) var(--space-4) var(--space-3);
+    padding: var(--space-3) var(--space-3) var(--space-2);
+    align-items: center;
   }
 
+  .dash-greeting h1 {
+    font-size: var(--text-lg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: var(--space-1);
+  }
+
+  .dash-greeting p {
+    display: none;
+  }
+
+  .dash-date {
+    display: none;
+  }
+
+  /* Timer menor */
+  .dash-focus-ring {
+    width: 100px;
+    height: 100px;
+    margin: var(--space-1) auto var(--space-3);
+  }
+
+  .dash-focus-time {
+    font-size: var(--text-lg);
+  }
+
+  /* Cards mais compactos */
   .dash-body {
-    padding: var(--space-4) var(--space-3);
+    padding: var(--space-3) var(--space-3);
   }
 
   .dash-grid {
@@ -755,6 +785,31 @@
 
   .dash-card {
     padding: var(--space-4);
+  }
+
+  .dash-card-head {
+    margin-bottom: var(--space-3);
+  }
+
+  /* Stats em grid 2x2 mais compacto */
+  .dash-stat {
+    padding: var(--space-3);
+  }
+
+  .dash-stat-value {
+    font-size: var(--text-xl);
+  }
+
+  /* Dropzone menor */
+  .dash-dropzone {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  /* Assistant mais compacto */
+  .dash-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 1.25rem;
   }
 }
 
