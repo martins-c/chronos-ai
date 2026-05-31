@@ -590,4 +590,70 @@
 .app.hidden {
   display: none !important;
 }
+/* ━━━ Bottom Navigation (mobile only) ━━━ */
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-header);
+    background: rgba(10, 10, 15, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: var(--space-2) 0;
+    padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom));
+  }
+
+  .bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: var(--space-2) 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .bottom-nav-item svg {
+    width: 22px;
+    height: 22px;
+    opacity: 0.6;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+
+  .bottom-nav-item.active {
+    color: var(--color-primary);
+  }
+
+  .bottom-nav-item.active svg {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px rgba(var(--color-primary-rgb), 0.5));
+  }
+
+  /* Empurra o conteúdo para cima da bottom nav */
+  .main {
+    padding-bottom: 64px;
+  }
+
+  /* Chat input fica acima da bottom nav */
+  .chat-input-area {
+    padding-bottom: calc(var(--space-4) + 64px);
+  }
+}
 }

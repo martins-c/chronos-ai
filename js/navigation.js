@@ -31,6 +31,13 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
     });
   }
 
+  // ━━━ Bottom Nav sync ━━━
+  function syncBottomNav(view) {
+    document.querySelectorAll('.bottom-nav-item[data-view]').forEach((item) => {
+      item.classList.toggle('active', item.dataset.view === view);
+    });
+  }
+
   function setView(view, options = {}) {
     const { title, subtitle } = options;
 
@@ -40,13 +47,14 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
     }
 
     if (view === 'settings') {
-      ui.showApiKeyModal();
+      ui.showApiKeyModal?.();
       return;
     }
 
     if (view === 'plano' || view === 'tarefas') {
       currentView = view;
       setNavActive(view);
+      syncBottomNav(view);
       showOnly(view);
       elements.sidebarChatPanel?.classList.remove('is-visible');
       ui.closeSidebar();
@@ -64,6 +72,7 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
       }
       currentView = view;
       setNavActive(view);
+      syncBottomNav(view);
       showOnly('placeholder');
       elements.sidebarChatPanel?.classList.remove('is-visible');
       ui.closeSidebar();
@@ -73,6 +82,7 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
 
     currentView = view;
     setNavActive(view);
+    syncBottomNav(view);
 
     if (view === 'chat') {
       showOnly('chat');
@@ -103,6 +113,15 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
   };
 
   navItems.forEach((item) => {
+    item.addEventListener('click', () => {
+      const view = item.dataset.view;
+      const meta = PLACEHOLDER_META[view];
+      setView(view, meta || {});
+    });
+  });
+
+  // ━━━ Bottom Nav click ━━━
+  document.querySelectorAll('.bottom-nav-item[data-view]').forEach((item) => {
     item.addEventListener('click', () => {
       const view = item.dataset.view;
       const meta = PLACEHOLDER_META[view];
