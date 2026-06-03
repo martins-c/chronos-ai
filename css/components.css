@@ -509,6 +509,77 @@
   font-size: var(--text-sm);
   text-align: center;
 }
+/* ━━━ Onboarding Steps ━━━ */
+.onboarding-step {
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.onboarding-step.hidden {
+  display: none;
+}
+
+.onboarding-step h1 {
+  font-size: 1.6rem;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.onboarding-step p {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.onboarding-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.onboarding-option {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.85);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.onboarding-option:hover {
+  background: rgba(0, 245, 255, 0.08);
+  border-color: rgba(0, 245, 255, 0.3);
+  color: white;
+  transform: translateX(4px);
+}
+
+.onboarding-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.onboarding-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  transition: all 0.3s ease;
+}
+
+.onboarding-dot.active {
+  background: #00f5ff;
+  box-shadow: 0 0 8px rgba(0, 245, 255, 0.5);
+  width: 20px;
+  border-radius: 3px;
+}
 /* ━━━ Early Access Screen ━━━ */
 .early-access-screen {
   position: fixed;

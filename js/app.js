@@ -352,49 +352,117 @@ function bindEvents() {
       }
     }
   });
+  
+ // ━━━ Onboarding ━━━
 
-  // ━━━ Early Access Login ━━━
+ const SAVED_USER_KEY = 'chronos_user';
+ const earlyAccessScreen = document.getElementById('earlyAccessScreen');
+ const appContainer = document.getElementById('app');
 
-  const SAVED_USER_KEY = 'chronos_user';
-  const earlyAccessScreen = document.getElementById('earlyAccessScreen');
-  const enterChronosBtn = document.getElementById('enterChronosBtn');
-  const earlyAccessName = document.getElementById('earlyAccessName');
-  const appContainer = document.getElementById('app');
+ const step1 = document.getElementById('onboardingStep1');
+ const step2 = document.getElementById('onboardingStep2');
+ const step3 = document.getElementById('onboardingStep3');
+ const dot1 = document.getElementById('dot1');
+ const dot2 = document.getElementById('dot2');
+ const dot3 = document.getElementById('dot3');
 
-  function updateChronosUsername(name) {
-    const heroTitle = document.querySelector('.hero-title');
-    if (heroTitle) heroTitle.innerHTML = `Boa noite, ${name} ⚡`;
-  }
+ const nameInput = document.getElementById('earlyAccessName');
+ const courseInput = document.getElementById('onboardingCourse');
 
-  function enterChronos(name) {
-    const username = name?.trim() || 'Estudante';
-    localStorage.setItem(SAVED_USER_KEY, JSON.stringify({ name: username }));
-    if (earlyAccessScreen) earlyAccessScreen.style.display = 'none';
-    if (appContainer) appContainer.style.display = 'flex';
-    document.body.style.overflow = 'auto';
-    updateChronosUsername(username);
-  }
+ let onboardingData = { name: '', course: '', goal: '' };
 
-  function loadChronosUser() {
-    const savedUser = localStorage.getItem(SAVED_USER_KEY);
-    if (!savedUser) return;
-    try {
-      const user = JSON.parse(savedUser);
-      if (earlyAccessScreen) earlyAccessScreen.style.display = 'none';
-      if (appContainer) appContainer.style.display = 'flex';
-      updateChronosUsername(user.name);
-    } catch (error) {
-      console.error(error);
-    }
-  }
+ function showStep(n) {
+   [step1, step2, step3].forEach((s, i) => {
+     s?.classList.toggle('hidden', i + 1 !== n);
+   });
+   [dot1, dot2, dot3].forEach((d, i) => {
+     d?.classList.toggle('active', i + 1 === n);
+   });
+ }
 
-  enterChronosBtn?.addEventListener('click', () => enterChronos(earlyAccessName?.value));
-  earlyAccessName?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') enterChronos(earlyAccessName.value);
-  });
+ function finishOnboarding() {
+   const { name, course, goal } = onboardingData;
+   localStorage.setItem(SAVED_USER_KEY, JSON.stringify({ name, course, goal }));
 
-  loadChronosUser();
+   if (earlyAccessScreen) earlyAccessScreen.style.display = 'none';
+   if (appContainer) appContainer.style.display = 'flex';
+   document.body.style.overflow = 'auto';
+
+   // Atualiza saudação
+   const heroTitle = document.querySelector('.dash-greeting h1');
+   if (heroTitle) {
+     const hour = new Date().getHours();
+     const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+     heroTitle.textContent = `${greeting}, ${name} ⚡`;
+   }
+
+   // Manda contexto pro chat automaticamente
+   const goalMap = {
+     rotina: 'Quero montar uma rotina de estudos que funcione de verdade',
+     foco: 'Tô procrastinando demais e preciso de ajuda pra focar',
+     provas: 'Tenho provas chegando e preciso me organizar rápido',
+     procrastinacao: 'Trabalho e estudo ao mesmo tempo, minha rotina tá caótica',
+   };
+
+   const autoPrompt = `Meu nome é ${name}, estudo ${course || 'ainda não informei'}. ${goalMap[goal] || 'Quero organizar minha rotina de estudos.'}`;
+
+   setTimeout(() => {
+     navigation.setView('chat');
+     setTimeout(() => handleSendMessage(autoPrompt), 300);
+   }, 600);
+ }
+
+ function loadChronosUser() {
+   const savedUser = localStorage.getItem(SAVED_USER_KEY);
+   if (!savedUser) return;
+   try {
+     const user = JSON.parse(savedUser);
+     if (user.name) {
+       if (earlyAccessScreen) earlyAccessScreen.style.display = 'none';
+       if (appContainer) appContainer.style.display = 'flex';
+       const heroTitle = document.querySelector('.dash-greeting h1');
+       if (heroTitle) {
+         const hour = new Date().getHours();
+         const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+         heroTitle.textContent = `${greeting}, ${user.name} ⚡`;
+       }
+     }
+   } catch (e) {
+     console.error(e);
+   }
+ }
+
+ // Step 1 → 2
+ document.getElementById('onboardingNext1')?.addEventListener('click', () => {
+   const name = nameInput?.value?.trim();
+   if (!name) { nameInput?.focus(); return; }
+   onboardingData.name = name;
+   showStep(2);
+   courseInput?.focus();
+ });
+
+ nameInput?.addEventListener('keydown', (e) => {
+   if (e.key === 'Enter') document.getElementById('onboardingNext1')?.click();
+ });
+
+ // Step 2 → 3
+ document.getElementById('onboardingNext2')?.addEventListener('click', () => {
+   onboardingData.course = courseInput?.value?.trim() || '';
+   showStep(3);
+ });
+
+ courseInput?.addEventListener('keydown', (e) => {
+   if (e.key === 'Enter') document.getElementById('onboardingNext2')?.click();
+ });
+
+ // Step 3 — escolha do objetivo
+ document.querySelectorAll('.onboarding-option').forEach((btn) => {
+   btn.addEventListener('click', () => {
+     onboardingData.goal = btn.dataset.value;
+     finishOnboarding();
+   });
+ });
+
+ loadChronosUser();
 }
-
-// ━━━ Launch ━━━
 init();

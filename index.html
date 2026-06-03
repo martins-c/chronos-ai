@@ -77,29 +77,48 @@
   </div>
 
   <!-- ━━━ App Container ━━━ -->
-  <!-- ===== Early Access Screen ===== -->
-  <div class="early-access-screen" id="earlyAccessScreen">
+<!-- ===== Onboarding Screen ===== -->
+<div class="early-access-screen" id="earlyAccessScreen">
   <div class="early-access-card">
 
     <div class="early-access-logo">
       <span>Chronos <span class="logo-ai">AI</span></span>
     </div>
 
-    <h1>O futuro da produtividade começou.</h1>
+    <!-- Step 1 — Nome -->
+    <div class="onboarding-step" id="onboardingStep1">
+      <h1>Qual é o seu nome?</h1>
+      <p>Vou usar para personalizar sua experiência.</p>
+      <input type="text" id="earlyAccessName" placeholder="Seu nome" autocomplete="given-name" />
+      <button id="onboardingNext1" type="button">Continuar →</button>
+    </div>
 
-    <p>
-      Entre para acessar a experiência Chronos AI Early Access.
-    </p>
+    <!-- Step 2 — Curso -->
+    <div class="onboarding-step hidden" id="onboardingStep2">
+      <h1>O que você estuda?</h1>
+      <p>Pode ser curso, escola, concurso — qualquer coisa.</p>
+      <input type="text" id="onboardingCourse" placeholder="Ex: Medicina, ENEM, Direito..." />
+      <button id="onboardingNext2" type="button">Continuar →</button>
+    </div>
 
-    <input
-      type="text"
-      id="earlyAccessName"
-      placeholder="Seu nome"
-    />
+    <!-- Step 3 — Objetivo -->
+    <div class="onboarding-step hidden" id="onboardingStep3">
+      <h1>Qual é seu maior desafio agora?</h1>
+      <p>Isso vai ajudar o Chronos a te entender melhor.</p>
+      <div class="onboarding-options">
+        <button class="onboarding-option" data-value="rotina">📅 Montar uma rotina</button>
+        <button class="onboarding-option" data-value="foco">⚡ Manter o foco</button>
+        <button class="onboarding-option" data-value="provas">📝 Me preparar para provas</button>
+        <button class="onboarding-option" data-value="procrastinacao">😴 Parar de procrastinar</button>
+      </div>
+    </div>
 
-    <button id="enterChronosBtn">
-      Entrar na Chronos ⚡
-    </button>
+    <!-- Progress dots -->
+    <div class="onboarding-dots">
+      <span class="onboarding-dot active" id="dot1"></span>
+      <span class="onboarding-dot" id="dot2"></span>
+      <span class="onboarding-dot" id="dot3"></span>
+    </div>
 
   </div>
 </div>
