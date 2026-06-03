@@ -18,6 +18,24 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+function getGreeting(name) {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return `Bom dia, ${name} ☀️`;
+  if (hour >= 12 && hour < 18) return `Boa tarde, ${name} ⚡`;
+  return `Boa noite, ${name} 🌙`;
+}
+
+function updateGreeting() {
+  const heroTitle = document.querySelector('.dash-greeting h1');
+  if (!heroTitle) return;
+  const saved = localStorage.getItem('chronos_user');
+  let name = 'estudante';
+  if (saved) {
+    try { name = JSON.parse(saved).name || name; } catch {}
+  }
+  heroTitle.textContent = getGreeting(name);
+}
+
 export function initDashboard({ focusMode, navigation }) {
   document.querySelectorAll('[data-action="open-focus"]').forEach((el) => {
     el.addEventListener('click', () => focusMode.open());
@@ -41,6 +59,8 @@ export function initDashboard({ focusMode, navigation }) {
     });
     dashDate.dateTime = now.toISOString().slice(0, 10);
   }
+
+  updateGreeting();
 
   const dashFocusTime = document.getElementById('dashFocusTime');
   const dashFocusMeta = document.getElementById('dashFocusMeta');
@@ -72,18 +92,13 @@ export function initDashboard({ focusMode, navigation }) {
     }
 
     if (dashFocusBadge) {
-      const badges = {
-        idle: 'Pronto',
-        running: 'Em foco',
-        paused: 'Pausado',
-      };
+      const badges = { idle: 'Pronto', running: 'Em foco', paused: 'Pausado' };
       dashFocusBadge.textContent = badges[state.status] || 'Ativo';
     }
 
     if (dashStatFocusToday && state.stats) {
       const total = state.stats.totalFocusSecondsToday;
-      dashStatFocusToday.textContent =
-        total > 0 ? formatFocusTotal(total) : '0m';
+      dashStatFocusToday.textContent = total > 0 ? formatFocusTotal(total) : '0m';
     }
 
     if (dashStatSessions && state.stats) {
