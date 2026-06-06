@@ -1,19 +1,12 @@
-const STORAGE_KEY = 'chronos_materials';
+import {
+  deleteMaterial,
+  readMaterials,
+  saveMaterials,
+  updateMaterial,
+} from './materials-storage.js';
+
 const MAX_FILE_BYTES = 4 * 1024 * 1024;
 const sessionFiles = new Map();
-
-function readMaterials() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveMaterials(materials) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(materials));
-}
 
 function createId() {
   return `mat_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
@@ -117,15 +110,6 @@ async function analyzeFile(file) {
     throw new Error(payload.error || `Erro ${response.status}`);
   }
   return payload.analysis;
-}
-
-function updateMaterial(id, patch) {
-  const materials = readMaterials();
-  const index = materials.findIndex((item) => item.id === id);
-  if (index < 0) return null;
-  materials[index] = { ...materials[index], ...patch };
-  saveMaterials(materials);
-  return materials[index];
 }
 
 export function initUploadsView({ ui, onAskChronos }) {
@@ -241,7 +225,7 @@ export function initUploadsView({ ui, onAskChronos }) {
     if (!material) return;
 
     if (button.dataset.action === 'delete') {
-      saveMaterials(materials.filter((item) => item.id !== materialId));
+      deleteMaterial(materialId);
       sessionFiles.delete(materialId);
       render();
       ui.showToast?.('Material removido');

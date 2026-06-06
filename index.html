@@ -465,6 +465,25 @@
       <!-- Input Area -->
       <div class="chat-input-area">
         <div class="input-wrapper">
+          <div class="material-context" id="materialContext">
+            <div class="material-context-row">
+              <button class="material-context-trigger" id="btnMaterialContext" type="button">
+                <span>Materiais</span>
+                <strong id="materialContextCount">0</strong>
+              </button>
+              <div class="material-context-chips" id="materialContextChips"></div>
+            </div>
+            <div class="material-context-menu hidden" id="materialContextMenu">
+              <div class="material-context-menu-head">
+                <strong>Usar como contexto</strong>
+                <button type="button" id="btnMaterialContextClear">Limpar</button>
+              </div>
+              <div class="material-context-list" id="materialContextList"></div>
+              <p class="material-context-empty hidden" id="materialContextEmpty">
+                Nenhum material analisado ainda.
+              </p>
+            </div>
+          </div>
           <div class="input-container" id="inputContainer">
             <textarea
               id="messageInput"

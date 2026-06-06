@@ -28,6 +28,7 @@ import { initPlanView } from './plan.js';
 import { initTasksView } from './tasks.js';
 import { initUploadsView } from './uploads.js';
 import { initAnalyticsView } from './analytics.js';
+import { initMaterialContext } from './material-context.js';
 
 // ━━━ DOM References ━━━
 
@@ -79,6 +80,7 @@ const planView = initPlanView({ ui });
 const tasksView = initTasksView({ ui });
 let uploadsView;
 let analyticsView;
+const materialContext = initMaterialContext({ ui });
 
 const navigation = initNavigation({
   elements,
@@ -224,6 +226,16 @@ async function handleSendMessage(text) {
     role: m.role,
     content: m.content,
   }));
+  const materialContextText = materialContext.getContextText();
+
+  if (materialContextText && apiMessages.length) {
+    const lastMessage = apiMessages[apiMessages.length - 1];
+    lastMessage.content = [
+      materialContextText,
+      'Mensagem do usuario:',
+      lastMessage.content,
+    ].join('\n\n');
+  }
 
   chat.removeTypingIndicator();
   chat.startStreaming();
