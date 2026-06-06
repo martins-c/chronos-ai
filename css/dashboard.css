@@ -619,6 +619,10 @@
   box-shadow: 0 0 12px rgba(var(--color-primary-rgb), 0.25);
   min-height: 8px;
 }
+.dash-chart-bar--today {
+  background: linear-gradient(to top, var(--color-primary), rgba(var(--color-primary-rgb), 0.4));
+  box-shadow: 0 0 16px rgba(var(--color-primary-rgb), 0.4);
+}
 
 .dash-chart-bar span {
   font-size: 10px;
@@ -739,6 +743,11 @@
   .sidebar-nav {
     padding-left: var(--space-2);
     padding-right: var(--space-2);
+    /* Barra de hoje destacada */
+  .dash-chart-bar--today {
+    background: linear-gradient(to top, var(--color-primary), rgba(var(--color-primary-rgb), 0.4));
+    box-shadow: 0 0 16px rgba(var(--color-primary-rgb), 0.4);
+  }
   }
 
   /* Header compacto */

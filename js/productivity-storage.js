@@ -187,3 +187,64 @@ export function formatMinutes(mins) {
   const r = m % 60;
   return r > 0 ? `${h}h ${r}m` : `${h}h`;
 }
+
+// ━━━ Weekly focus data (dados reais do focus.js) ━━━
+
+export function getWeeklyFocusData() {
+  const DAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+  // Gera os últimos 7 dias
+  const days = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    days.push({
+      key: d.toISOString().slice(0, 10),
+      label: DAY_LABELS[d.getDay()],
+      seconds: 0,
+    });
+  }
+
+  // Lê sessões do focus.js
+  try {
+    const raw = localStorage.getItem('chronos_focus_stats');
+    if (raw) {
+      const focusStats = JSON.parse(raw);
+      const sessions = Array.isArray(focusStats.sessions) ? focusStats.sessions : [];
+
+      sessions.forEach((session) => {
+        if (!session.completedAt || !session.durationSeconds) return;
+        const dateKey = new Date(session.completedAt).toISOString().slice(0, 10);
+        const day = days.find((d) => d.key === dateKey);
+        if (day) day.seconds += session.durationSeconds;
+      });
+
+      // Também conta o dia atual do totalFocusSecondsToday
+      if (focusStats.todayDate && focusStats.totalFocusSecondsToday > 0) {
+        const todayDay = days.find((d) => d.key === focusStats.todayDate);
+        if (todayDay && todayDay.seconds === 0) {
+          todayDay.seconds = focusStats.totalFocusSecondsToday;
+        }
+      }
+    }
+  } catch {}
+
+  const maxSeconds = Math.max(...days.map((d) => d.seconds), 1);
+
+  return days.map((d) => ({
+    label: d.label,
+    seconds: d.seconds,
+    percent: Math.round((d.seconds / maxSeconds) * 100),
+    display: d.seconds > 0 ? formatFocusSeconds(d.seconds) : '0',
+  }));
+}
+
+function formatFocusSeconds(seconds) {
+  const s = Math.floor(seconds);
+  if (s < 60) return `${s}s`;
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  if (h > 0) return m > 0 ? `${h}h${m}m` : `${h}h`;
+  return `${m}m`;
+}
