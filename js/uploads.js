@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'chronos_materials';
+const MAX_FILE_BYTES = 4 * 1024 * 1024;
 const sessionFiles = new Map();
 
 function readMaterials() {
@@ -35,6 +36,15 @@ function getKind(file) {
   return 'Arquivo';
 }
 
+function getMimeType(file) {
+  const name = file.name.toLowerCase();
+  if (file.type) return file.type;
+  if (name.endsWith('.md')) return 'text/markdown';
+  if (name.endsWith('.txt')) return 'text/plain';
+  if (name.endsWith('.pdf')) return 'application/pdf';
+  return 'application/octet-stream';
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll('&', '&amp;')
@@ -45,11 +55,77 @@ function escapeHtml(value) {
 }
 
 function materialPrompt(material) {
+  if (material.analysis) {
+    const points = Array.isArray(material.analysis.keyPoints)
+      ? material.analysis.keyPoints.map((point) => `- ${point}`).join('\n')
+      : '';
+    const questions = Array.isArray(material.analysis.questions)
+      ? material.analysis.questions.map((question) => `- ${question}`).join('\n')
+      : '';
+
+    return [
+      `Analise comigo o material "${material.name}".`,
+      '',
+      `Resumo extraido:\n${material.analysis.summary || 'Sem resumo disponivel.'}`,
+      points ? `\nPontos-chave:\n${points}` : '',
+      questions ? `\nPerguntas sugeridas:\n${questions}` : '',
+      '',
+      'Agora transforme isso em uma explicacao clara, um plano de revisao e um quiz curto para eu praticar.',
+    ]
+      .filter(Boolean)
+      .join('\n');
+  }
+
   return [
     `Tenho um material chamado "${material.name}" (${material.kind}).`,
+    material.status === 'error'
+      ? `A analise automatica falhou: ${material.error || 'erro desconhecido'}.`
+      : 'Ainda nao tenho conteudo extraido desse material.',
     'Quero transformar isso em estudo pratico.',
     'Monte um resumo, pontos-chave, plano de revisao e perguntas para eu testar meu entendimento.',
   ].join(' ');
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result || '');
+      resolve(result.includes(',') ? result.split(',').pop() : result);
+    };
+    reader.onerror = () => reject(new Error('Nao consegui ler o arquivo.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function analyzeFile(file) {
+  const data = await fileToBase64(file);
+  const response = await fetch('/api/materials', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      file: {
+        name: file.name,
+        mimeType: getMimeType(file),
+        size: file.size,
+        data,
+      },
+    }),
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload.error || `Erro ${response.status}`);
+  }
+  return payload.analysis;
+}
+
+function updateMaterial(id, patch) {
+  const materials = readMaterials();
+  const index = materials.findIndex((item) => item.id === id);
+  if (index < 0) return null;
+  materials[index] = { ...materials[index], ...patch };
+  saveMaterials(materials);
+  return materials[index];
 }
 
 export function initUploadsView({ ui, onAskChronos }) {
@@ -70,22 +146,57 @@ export function initUploadsView({ ui, onAskChronos }) {
 
     list.innerHTML = materials
       .map(
-        (material) => `
-          <article class="material-card" data-material-id="${escapeHtml(material.id)}">
+        (material) => {
+          const status = material.status || (material.analysis ? 'ready' : 'pending');
+          return `
+          <article class="material-card material-card--${escapeHtml(status)}" data-material-id="${escapeHtml(material.id)}">
             <div class="material-card-main">
-              <span class="material-kind">${escapeHtml(material.kind)}</span>
+              <div class="material-card-top">
+                <span class="material-kind">${escapeHtml(material.kind)}</span>
+                <span class="material-status">${getStatusLabel(material)}</span>
+              </div>
               <h3>${escapeHtml(material.name)}</h3>
               <p>${formatBytes(material.size)} adicionados ${new Date(material.uploadedAt).toLocaleDateString('pt-BR')}</p>
+              ${material.analysis?.summary ? `<small class="material-summary">${escapeHtml(material.analysis.summary)}</small>` : ''}
+              ${material.error ? `<small class="material-error">${escapeHtml(material.error)}</small>` : ''}
             </div>
             <div class="material-actions">
-              <button type="button" class="material-action" data-action="ask">Chat</button>
+              <button type="button" class="material-action" data-action="ask" ${material.status === 'processing' ? 'disabled' : ''}>Chat</button>
               <button type="button" class="material-action" data-action="preview">Ver</button>
+              <button type="button" class="material-action" data-action="retry" ${material.status !== 'error' ? 'hidden' : ''}>Tentar</button>
               <button type="button" class="material-action material-action--danger" data-action="delete">Excluir</button>
             </div>
           </article>
-        `
+        `;
+        }
       )
       .join('');
+  }
+
+  function getStatusLabel(material) {
+    const labels = {
+      processing: 'Analisando',
+      ready: 'Pronto',
+      error: 'Erro',
+      pending: 'Pendente',
+    };
+    const status = material.status || (material.analysis ? 'ready' : 'pending');
+    return labels[status] || 'Pendente';
+  }
+
+  async function processMaterial(id, file) {
+    try {
+      updateMaterial(id, { status: 'processing', error: '', analysis: null });
+      render();
+      const analysis = await analyzeFile(file);
+      updateMaterial(id, { status: 'ready', analysis, processedAt: Date.now() });
+      ui.showToast?.('Material analisado');
+    } catch (error) {
+      updateMaterial(id, { status: 'error', error: error.message || 'Falha ao analisar material.' });
+      ui.showToast?.(error.message || 'Falha ao analisar material.', 'error');
+    } finally {
+      render();
+    }
   }
 
   input?.addEventListener('change', () => {
@@ -96,20 +207,27 @@ export function initUploadsView({ ui, onAskChronos }) {
     files.forEach((file) => {
       const id = createId();
       sessionFiles.set(id, file);
+      const tooLarge = file.size > MAX_FILE_BYTES;
       current.push({
         id,
         name: file.name,
-        type: file.type,
+        type: getMimeType(file),
         size: file.size,
         kind: getKind(file),
         uploadedAt: Date.now(),
+        status: tooLarge ? 'error' : 'processing',
+        error: tooLarge ? 'Arquivo acima de 4 MB neste preview.' : '',
+        analysis: null,
       });
+      if (!tooLarge) {
+        setTimeout(() => processMaterial(id, file), 50);
+      }
     });
 
     saveMaterials(current);
     input.value = '';
     render();
-    ui.showToast?.(files.length === 1 ? 'Material adicionado' : 'Materiais adicionados');
+    ui.showToast?.(files.length === 1 ? 'Material enviado para analise' : 'Materiais enviados para analise');
   });
 
   list?.addEventListener('click', (event) => {
@@ -137,6 +255,16 @@ export function initUploadsView({ ui, onAskChronos }) {
         return;
       }
       window.open(URL.createObjectURL(file), '_blank', 'noopener');
+      return;
+    }
+
+    if (button.dataset.action === 'retry') {
+      const file = sessionFiles.get(materialId);
+      if (!file) {
+        ui.showToast?.('Reabra o arquivo para tentar analisar novamente.', 'error');
+        return;
+      }
+      processMaterial(materialId, file);
       return;
     }
 
