@@ -8,6 +8,8 @@ const VIEW_IDS = {
   chat: 'viewChat',
   plano: 'viewPlano',
   tarefas: 'viewTarefas',
+  uploads: 'viewUploads',
+  analytics: 'viewAnalytics',
   placeholder: 'viewPlaceholder',
 };
 
@@ -18,6 +20,8 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
     chat: document.getElementById(VIEW_IDS.chat),
     plano: document.getElementById(VIEW_IDS.plano),
     tarefas: document.getElementById(VIEW_IDS.tarefas),
+    uploads: document.getElementById(VIEW_IDS.uploads),
+    analytics: document.getElementById(VIEW_IDS.analytics),
     placeholder: document.getElementById(VIEW_IDS.placeholder),
   };
 
@@ -51,7 +55,7 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
       return;
     }
 
-    if (view === 'plano' || view === 'tarefas') {
+    if (['plano', 'tarefas', 'uploads', 'analytics'].includes(view)) {
       currentView = view;
       setNavActive(view);
       syncBottomNav(view);

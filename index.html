@@ -272,7 +272,7 @@
             <article class="dash-card dash-card--stats">
               <div class="dash-card-head">
                 <h3 class="dash-card-title">Análises do Dia</h3>
-                <span class="dash-card-badge">Demo</span>
+                <span class="dash-card-badge">Ao vivo</span>
               </div>
               <div class="dash-stats">
                 <div class="dash-stat"><div class="dash-stat-value" id="dashStatFocusToday">0m</div><div class="dash-stat-label">Foco hoje</div></div>
@@ -299,13 +299,13 @@
             <article class="dash-card dash-card--upload">
               <div class="dash-card-head">
                 <h3 class="dash-card-title">Upload Inteligente</h3>
-                <span class="dash-card-badge">Em breve</span>
+                <button type="button" class="dash-card-action" data-view-link="uploads">Abrir</button>
               </div>
-              <div class="dash-dropzone">
+              <button type="button" class="dash-dropzone" data-view-link="uploads">
                 <div class="dash-dropzone-icon">📎</div>
                 <p>Arraste PDFs, imagens ou anotações</p>
-                <small>Processamento por IA — fase 2</small>
-              </div>
+                <small>Crie materiais para revisar no chat</small>
+              </button>
             </article>
 
             <article class="dash-card dash-card--insights">
@@ -329,7 +329,7 @@
             <article class="dash-card dash-card--calendar">
               <div class="dash-card-head">
                 <h3 class="dash-card-title">Calendário Inteligente</h3>
-                <span class="dash-card-badge">Maio</span>
+                <button type="button" class="dash-card-action" data-view-link="analytics">Ver análise</button>
               </div>
               <div class="dash-calendar" aria-hidden="true">
                 <span class="dash-cal-day head">D</span><span class="dash-cal-day head">S</span><span class="dash-cal-day head">T</span><span class="dash-cal-day head">Q</span><span class="dash-cal-day head">Q</span><span class="dash-cal-day head">S</span><span class="dash-cal-day head">S</span>
@@ -341,6 +341,76 @@
               </div>
             </article>
 
+          </div>
+        </div>
+      </section>
+
+      <!-- ━━━ Uploads / Materiais ━━━ -->
+      <section class="app-view view-materials" id="viewUploads" aria-label="Materiais">
+        <header class="prod-page-header">
+          <button type="button" class="btn-icon btn-menu js-menu-toggle" aria-label="Abrir menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="prod-page-heading">
+            <h1>Materiais</h1>
+            <p>PDFs, imagens e anotações para transformar em estudo.</p>
+          </div>
+          <span class="prod-page-meta" id="uploadsCount">—</span>
+        </header>
+        <div class="materials-body">
+          <label class="material-dropzone" for="materialInput">
+            <input id="materialInput" type="file" accept="application/pdf,image/*,.txt,.md" multiple>
+            <span class="material-dropzone-icon">↥</span>
+            <strong>Adicionar material</strong>
+            <small>PDF, imagem, TXT ou Markdown. Nesta fase, o arquivo fica no seu navegador.</small>
+          </label>
+          <div class="materials-grid" id="materialsList"></div>
+          <div class="prod-empty hidden" id="materialsEmpty">
+            <div class="prod-empty-icon">📎</div>
+            <h3>Nenhum material ainda</h3>
+            <p>Envie seu primeiro arquivo para criar contexto de estudo no Chronos.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ━━━ Análises ━━━ -->
+      <section class="app-view view-analytics" id="viewAnalytics" aria-label="Análises de desempenho">
+        <header class="prod-page-header">
+          <button type="button" class="btn-icon btn-menu js-menu-toggle" aria-label="Abrir menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="prod-page-heading">
+            <h1>Desempenho</h1>
+            <p>Foco, tarefas e consistência com dados reais do navegador.</p>
+          </div>
+          <span class="prod-page-meta" id="analyticsMeta">Semana atual</span>
+        </header>
+        <div class="analytics-body">
+          <section class="analytics-hero">
+            <div>
+              <span class="analytics-kicker">Resumo semanal</span>
+              <h2 id="analyticsFocusTotal">0m</h2>
+              <p id="analyticsFocusCopy">Complete uma sessão de foco para iniciar seu histórico.</p>
+            </div>
+            <div class="analytics-score">
+              <span id="analyticsCompletion">0%</span>
+              <small>plano concluído hoje</small>
+            </div>
+          </section>
+          <div class="analytics-grid">
+            <article class="analytics-panel">
+              <div class="dash-card-head">
+                <h3 class="dash-card-title">Foco semanal</h3>
+                <span class="dash-card-badge" id="analyticsBestDay">—</span>
+              </div>
+              <div class="analytics-bars" id="analyticsBars"></div>
+            </article>
+            <article class="analytics-panel">
+              <div class="dash-card-head">
+                <h3 class="dash-card-title">Sinais do dia</h3>
+              </div>
+              <div class="analytics-signals" id="analyticsSignals"></div>
+            </article>
           </div>
         </div>
       </section>
@@ -528,6 +598,10 @@
   <button class="bottom-nav-item" data-view="chat" type="button" aria-label="Chat">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
     Chat
+  </button>
+  <button class="bottom-nav-item bottom-nav-item--primary" data-view="uploads" type="button" aria-label="Materiais">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    Materiais
   </button>
   <button class="bottom-nav-item" data-view="focus" type="button" aria-label="Modo Foco">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>

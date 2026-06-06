@@ -26,6 +26,8 @@ import { initNavigation } from './navigation.js';
 import { initDashboard } from './dashboard.js';
 import { initPlanView } from './plan.js';
 import { initTasksView } from './tasks.js';
+import { initUploadsView } from './uploads.js';
+import { initAnalyticsView } from './analytics.js';
 
 // ━━━ DOM References ━━━
 
@@ -75,6 +77,8 @@ const focusMode = initFocusMode({ elements, ui });
 
 const planView = initPlanView({ ui });
 const tasksView = initTasksView({ ui });
+let uploadsView;
+let analyticsView;
 
 const navigation = initNavigation({
   elements,
@@ -86,8 +90,25 @@ const navigation = initNavigation({
     }
     if (view === 'plano') planView.render?.();
     if (view === 'tarefas') tasksView.render?.();
+    if (view === 'uploads') uploadsView?.render?.();
+    if (view === 'analytics') analyticsView?.render?.();
   },
 });
+
+uploadsView = initUploadsView({
+  ui,
+  onAskChronos: (prompt) => {
+    navigation.setView('chat');
+    setTimeout(() => {
+      elements.messageInput.value = prompt;
+      ui.autoResizeInput(elements.messageInput);
+      ui.updateSendButton(true);
+      elements.messageInput.focus();
+    }, 150);
+  },
+});
+
+analyticsView = initAnalyticsView({ ui });
 
 initDashboard({ focusMode, navigation });
 
