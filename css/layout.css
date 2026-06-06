@@ -739,3 +739,20 @@
   }
 }
 }
+
+/* Final guard: bottom navigation is mobile-only. */
+@media (min-width: 768px) {
+  .bottom-nav {
+    display: none !important;
+  }
+
+  .main {
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .bottom-nav {
+    display: flex !important;
+  }
+}
