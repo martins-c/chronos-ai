@@ -345,7 +345,7 @@ function bindEvents() {
     if (e.key === 'Escape') {
       if (focusMode.isOpen()) {
         focusMode.close();
-      } else if (elements.apiKeyModal.classList.contains('active')) {
+      } else if (elements.apiKeyModal?.classList.contains('active')) {
         ui.hideApiKeyModal();
       } else if (elements.sidebar.classList.contains('open')) {
         ui.closeSidebar();
@@ -383,6 +383,8 @@ function bindEvents() {
  function finishOnboarding() {
    const { name, course, goal } = onboardingData;
    localStorage.setItem(SAVED_USER_KEY, JSON.stringify({ name, course, goal }));
+   setWelcomed();
+   ui.hideWelcome();
 
    if (earlyAccessScreen) earlyAccessScreen.style.display = 'none';
    if (appContainer) appContainer.style.display = 'flex';
@@ -418,6 +420,8 @@ function bindEvents() {
    try {
      const user = JSON.parse(savedUser);
      if (user.name) {
+       setWelcomed();
+       ui.hideWelcome();
        if (earlyAccessScreen) earlyAccessScreen.style.display = 'none';
        if (appContainer) appContainer.style.display = 'flex';
        const heroTitle = document.querySelector('.dash-greeting h1');
@@ -435,7 +439,11 @@ function bindEvents() {
  // Step 1 → 2
  document.getElementById('onboardingNext1')?.addEventListener('click', () => {
    const name = nameInput?.value?.trim();
-   if (!name) { nameInput?.focus(); return; }
+   if (!name) {
+     nameInput?.focus();
+     ui.showToast?.('Digite seu nome para continuar.', 'error');
+     return;
+   }
    onboardingData.name = name;
    showStep(2);
    courseInput?.focus();

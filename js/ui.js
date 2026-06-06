@@ -113,16 +113,22 @@ export class UIManager {
   // ━━━ API Key Modal ━━━
 
   showApiKeyModal() {
+    if (!this.els.apiKeyModal || !this.els.apiKeyInput) {
+      this.showToast('Configurações de API ainda não estão disponíveis.', 'error');
+      return;
+    }
     this.els.apiKeyModal.classList.add('active');
     setTimeout(() => this.els.apiKeyInput.focus(), 100);
   }
 
   hideApiKeyModal() {
+    if (!this.els.apiKeyModal || !this.els.apiKeyInput) return;
     this.els.apiKeyModal.classList.remove('active');
     this.els.apiKeyInput.value = '';
   }
 
   getApiKeyFromModal() {
+    if (!this.els.apiKeyInput) return '';
     return this.els.apiKeyInput.value.trim();
   }
 
