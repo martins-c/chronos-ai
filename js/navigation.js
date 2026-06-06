@@ -6,6 +6,7 @@
 const VIEW_IDS = {
   home: 'viewDashboard',
   chat: 'viewChat',
+  solver: 'viewSolver',
   plano: 'viewPlano',
   tarefas: 'viewTarefas',
   uploads: 'viewUploads',
@@ -18,6 +19,7 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
   const views = {
     home: document.getElementById(VIEW_IDS.home),
     chat: document.getElementById(VIEW_IDS.chat),
+    solver: document.getElementById(VIEW_IDS.solver),
     plano: document.getElementById(VIEW_IDS.plano),
     tarefas: document.getElementById(VIEW_IDS.tarefas),
     uploads: document.getElementById(VIEW_IDS.uploads),
@@ -55,7 +57,7 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
       return;
     }
 
-    if (['plano', 'tarefas', 'uploads', 'analytics'].includes(view)) {
+    if (['solver', 'plano', 'tarefas', 'uploads', 'analytics'].includes(view)) {
       currentView = view;
       setNavActive(view);
       syncBottomNav(view);

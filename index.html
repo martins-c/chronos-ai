@@ -148,6 +148,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           Chat
         </button>
+        <button type="button" class="nav-item" data-view="solver">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 00-4 12.74V16h8v-1.26A7 7 0 0012 2z"/></svg>
+          Resolver
+        </button>
         <button type="button" class="nav-item" data-view="focus">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           Modo Foco
@@ -416,6 +420,61 @@
       </section>
 
       <!-- ━━━ Chat View (unchanged flow) ━━━ -->
+      <section class="app-view view-solver" id="viewSolver" aria-label="Resolvedor escolar">
+        <header class="prod-page-header">
+          <button type="button" class="btn-icon btn-menu js-menu-toggle" aria-label="Abrir menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="prod-page-heading">
+            <h1>Resolver</h1>
+            <p>Questões escolares, cálculos e explicações com passo a passo e fontes.</p>
+          </div>
+          <span class="prod-page-meta" id="solverMeta">Com fontes</span>
+        </header>
+
+        <div class="solver-body">
+          <form class="solver-form" id="solverForm">
+            <div class="solver-field">
+              <label for="solverQuestion">Problema ou conteúdo</label>
+              <textarea id="solverQuestion" rows="6" placeholder="Cole uma questão, cálculo, tema ou dúvida. Ex: resolva 2x + 5 = 17 passo a passo, ou explique fotossíntese com questões." required></textarea>
+            </div>
+            <div class="solver-row">
+              <div class="solver-field">
+                <label for="solverSubject">Matéria</label>
+                <select id="solverSubject">
+                  <option value="">Detectar automaticamente</option>
+                  <option value="Matemática">Matemática</option>
+                  <option value="Física">Física</option>
+                  <option value="Química">Química</option>
+                  <option value="Biologia">Biologia</option>
+                  <option value="História">História</option>
+                  <option value="Geografia">Geografia</option>
+                  <option value="Português">Português</option>
+                  <option value="Inglês">Inglês</option>
+                </select>
+              </div>
+              <div class="solver-field">
+                <label for="solverLevel">Nível</label>
+                <select id="solverLevel">
+                  <option value="Ensino fundamental">Ensino fundamental</option>
+                  <option value="Ensino médio" selected>Ensino médio</option>
+                  <option value="ENEM e vestibular">ENEM e vestibular</option>
+                  <option value="Avançado">Avançado</option>
+                </select>
+              </div>
+            </div>
+            <button class="solver-submit" id="solverSubmit" type="submit">Resolver agora</button>
+          </form>
+
+          <div class="solver-state hidden" id="solverLoading">
+            <span class="solver-loader"></span>
+            <strong>Buscando fontes e resolvendo...</strong>
+          </div>
+
+          <div class="solver-result hidden" id="solverResult"></div>
+        </div>
+      </section>
+
       <section class="app-view view-chat" id="viewChat" aria-label="Chat Chronos">
 
       <header class="chat-header">

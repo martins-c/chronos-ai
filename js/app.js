@@ -29,6 +29,7 @@ import { initTasksView } from './tasks.js';
 import { initUploadsView } from './uploads.js';
 import { initAnalyticsView } from './analytics.js';
 import { initMaterialContext } from './material-context.js';
+import { initSolverView } from './solver.js';
 
 // ━━━ DOM References ━━━
 
@@ -78,6 +79,7 @@ const focusMode = initFocusMode({ elements, ui });
 
 const planView = initPlanView({ ui });
 const tasksView = initTasksView({ ui });
+const solverView = initSolverView({ ui });
 let uploadsView;
 let analyticsView;
 const materialContext = initMaterialContext({ ui });
@@ -92,6 +94,7 @@ const navigation = initNavigation({
     }
     if (view === 'plano') planView.render?.();
     if (view === 'tarefas') tasksView.render?.();
+    if (view === 'solver') solverView.render?.();
     if (view === 'uploads') uploadsView?.render?.();
     if (view === 'analytics') analyticsView?.render?.();
   },
