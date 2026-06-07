@@ -1,0 +1,181 @@
+/* Blue/black/white visual pass */
+:root {
+  --color-bg: #030712;
+  --color-surface: #07111f;
+  --color-surface-elevated: #0b1728;
+  --color-surface-hover: #10233c;
+
+  --color-border: rgba(148, 190, 255, 0.13);
+  --color-border-light: rgba(196, 220, 255, 0.18);
+  --color-border-focus: rgba(53, 162, 255, 0.58);
+
+  --color-text-primary: #f8fbff;
+  --color-text-secondary: #b8c7dc;
+  --color-text-muted: #6d7e94;
+
+  --color-primary: #3da7ff;
+  --color-primary-rgb: 61, 167, 255;
+  --color-primary-dim: rgba(61, 167, 255, 0.17);
+  --color-primary-subtle: rgba(61, 167, 255, 0.1);
+
+  --color-secondary: #eaf4ff;
+  --color-secondary-rgb: 234, 244, 255;
+  --color-secondary-dim: rgba(234, 244, 255, 0.12);
+
+  --glass-bg: rgba(8, 19, 35, 0.64);
+  --glass-bg-medium: rgba(10, 25, 46, 0.78);
+  --glass-bg-heavy: rgba(16, 40, 72, 0.82);
+  --glass-border: 1px solid rgba(162, 202, 255, 0.14);
+
+  --shadow-glow-primary:
+    0 0 18px rgba(var(--color-primary-rgb), 0.26),
+    0 0 42px rgba(var(--color-primary-rgb), 0.12);
+}
+
+body {
+  background:
+    linear-gradient(135deg, #02050d 0%, #071527 48%, #030712 100%);
+}
+
+.ambient-bg {
+  background:
+    linear-gradient(90deg, rgba(61, 167, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(61, 167, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 38%);
+  background-size: 44px 44px, 44px 44px, 100% 100%;
+  opacity: 0.85;
+}
+
+.orb {
+  display: none;
+}
+
+.app {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(61, 167, 255, 0.13), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 30%);
+}
+
+.sidebar {
+  background:
+    linear-gradient(180deg, rgba(5, 13, 26, 0.96), rgba(4, 9, 18, 0.98));
+  border-right: 1px solid rgba(150, 202, 255, 0.16);
+  box-shadow: 18px 0 40px rgba(0, 0, 0, 0.22);
+}
+
+.sidebar-header,
+.chat-header,
+.dash-header,
+.prod-page-header {
+  background:
+    linear-gradient(180deg, rgba(8, 19, 35, 0.92), rgba(5, 12, 24, 0.72));
+  border-color: rgba(162, 202, 255, 0.13);
+}
+
+.logo-small-icon {
+  width: 34px;
+  height: 34px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1c8dff, #65c7ff);
+  border: 1px solid rgba(216, 238, 255, 0.35);
+  border-radius: 11px;
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.logo-ai,
+.nav-item.active,
+.nav-item.active svg,
+.dash-card-badge,
+.prod-page-meta,
+.analytics-kicker,
+.solver-hero-result span {
+  color: var(--color-primary);
+}
+
+.nav-item {
+  border: 1px solid transparent;
+}
+
+.nav-item:hover {
+  background: rgba(61, 167, 255, 0.08);
+  border-color: rgba(61, 167, 255, 0.14);
+}
+
+.nav-item.active {
+  background:
+    linear-gradient(135deg, rgba(61, 167, 255, 0.18), rgba(255, 255, 255, 0.045));
+  border-color: rgba(61, 167, 255, 0.28);
+  box-shadow:
+    inset 3px 0 0 rgba(61, 167, 255, 0.9),
+    0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.input-container,
+.prod-form-card,
+.material-dropzone,
+.material-card,
+.analytics-panel,
+.analytics-hero,
+.solver-form,
+.solver-card,
+.solver-hero-result,
+.dash-card,
+.dash-focus-card,
+.sidebar-version-card {
+  background:
+    linear-gradient(180deg, rgba(12, 29, 52, 0.86), rgba(5, 12, 23, 0.86));
+  border: 1px solid rgba(162, 202, 255, 0.14);
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.23),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.message-ai .message-bubble,
+.typing-bubble {
+  background:
+    linear-gradient(180deg, rgba(11, 27, 49, 0.92), rgba(7, 16, 31, 0.94));
+  border-color: rgba(162, 202, 255, 0.15);
+  border-left-color: rgba(61, 167, 255, 0.75);
+}
+
+.message-user .message-bubble {
+  background: linear-gradient(135deg, rgba(23, 118, 255, 0.34), rgba(255, 255, 255, 0.09));
+  border-color: rgba(162, 202, 255, 0.22);
+}
+
+.btn-send,
+.btn-start,
+.prod-submit,
+.solver-submit {
+  background: linear-gradient(135deg, #1e8fff, #82d4ff);
+  color: #020711;
+  box-shadow:
+    0 0 18px rgba(61, 167, 255, 0.32),
+    0 12px 32px rgba(0, 0, 0, 0.22);
+}
+
+.btn-send.active:hover,
+.btn-start:hover,
+.prod-submit:hover,
+.solver-submit:hover {
+  filter: brightness(1.08);
+}
+
+.early-access-screen {
+  background:
+    linear-gradient(135deg, #02050d 0%, #071527 54%, #030712 100%) !important;
+}
+
+.early-access-card {
+  background: rgba(6, 16, 31, 0.9) !important;
+  border-color: rgba(162, 202, 255, 0.2) !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 30px 80px rgba(0, 0, 0, 0.44),
+    0 0 46px rgba(61, 167, 255, 0.13) !important;
+}
+
+.bottom-nav {
+  background: rgba(4, 11, 22, 0.96) !important;
+  border-top-color: rgba(162, 202, 255, 0.16) !important;
+}
