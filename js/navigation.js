@@ -11,6 +11,7 @@ const VIEW_IDS = {
   tarefas: 'viewTarefas',
   uploads: 'viewUploads',
   analytics: 'viewAnalytics',
+  settings: 'viewSettings',
   placeholder: 'viewPlaceholder',
 };
 
@@ -24,6 +25,7 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
     tarefas: document.getElementById(VIEW_IDS.tarefas),
     uploads: document.getElementById(VIEW_IDS.uploads),
     analytics: document.getElementById(VIEW_IDS.analytics),
+    settings: document.getElementById(VIEW_IDS.settings),
     placeholder: document.getElementById(VIEW_IDS.placeholder),
   };
 
@@ -52,12 +54,7 @@ export function initNavigation({ elements, focusMode, ui, onViewChange }) {
       return;
     }
 
-    if (view === 'settings') {
-      ui.showApiKeyModal?.();
-      return;
-    }
-
-    if (['solver', 'plano', 'tarefas', 'uploads', 'analytics'].includes(view)) {
+    if (['solver', 'plano', 'tarefas', 'uploads', 'analytics', 'settings'].includes(view)) {
       currentView = view;
       setNavActive(view);
       syncBottomNav(view);

@@ -31,6 +31,7 @@ import { initAnalyticsView } from './analytics.js';
 import { initMaterialContext } from './material-context.js';
 import { initSolverView } from './solver.js';
 import { getMemoryContext, rememberMessage, rememberOnboarding } from './memory.js';
+import { initSettingsView } from './settings.js';
 
 // ━━━ DOM References ━━━
 
@@ -81,6 +82,7 @@ const focusMode = initFocusMode({ elements, ui });
 const planView = initPlanView({ ui });
 const tasksView = initTasksView({ ui });
 const solverView = initSolverView({ ui });
+const settingsView = initSettingsView({ ui });
 let uploadsView;
 let analyticsView;
 const materialContext = initMaterialContext({ ui });
@@ -98,6 +100,7 @@ const navigation = initNavigation({
     if (view === 'solver') solverView.render?.();
     if (view === 'uploads') uploadsView?.render?.();
     if (view === 'analytics') analyticsView?.render?.();
+    if (view === 'settings') settingsView.render?.();
   },
 });
 
@@ -332,6 +335,10 @@ function bindEvents() {
   elements.quickActions.addEventListener('click', (e) => {
     const chip = e.target.closest('.chip');
     if (chip) {
+      if (chip.dataset.view) {
+        navigation.setView(chip.dataset.view);
+        return;
+      }
       const prompt = chip.dataset.prompt;
       if (prompt) {
         elements.messageInput.value = prompt;

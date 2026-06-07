@@ -517,6 +517,8 @@
               <button class="chip" data-prompt="Tenho provas chegando e preciso me organizar rápido">📝 Provas chegando</button>
               <button class="chip" data-prompt="Tô procrastinando demais e preciso de ajuda pra focar">⚡ Tô procrastinando</button>
               <button class="chip" data-prompt="Trabalho e estudo ao mesmo tempo, minha rotina tá caótica">😴 Trabalho e estudo</button>
+              <button class="chip" data-view="solver">Resolver questão</button>
+              <button class="chip" data-view="uploads">Analisar material</button>
             </div>
           </div>
         </div>
@@ -667,6 +669,36 @@
         </div>
       </section>
 
+      <section class="app-view view-settings" id="viewSettings" aria-label="Configurações e memória">
+        <header class="prod-page-header">
+          <button type="button" class="btn-icon btn-menu js-menu-toggle" aria-label="Abrir menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="prod-page-heading">
+            <h1>Memória</h1>
+            <p>Controle o que a Chronos lembra entre conversas.</p>
+          </div>
+          <span class="prod-page-meta" id="memoryUpdatedAt">—</span>
+        </header>
+        <div class="settings-body">
+          <form class="memory-form" id="memoryForm">
+            <div class="settings-grid">
+              <label class="memory-field"><span>Nome</span><input id="memoryName" type="text" placeholder="Seu nome"></label>
+              <label class="memory-field"><span>Curso ou foco</span><input id="memoryCourse" type="text" placeholder="Ex: ENEM, Medicina, Direito"></label>
+            </div>
+            <label class="memory-field"><span>Objetivos</span><textarea id="memoryGoals" rows="4" placeholder="Um objetivo por linha"></textarea></label>
+            <label class="memory-field"><span>Rotina e disponibilidade</span><textarea id="memoryRoutine" rows="4" placeholder="Horários, trabalho, aulas, energia do dia"></textarea></label>
+            <label class="memory-field"><span>Matérias e dificuldades</span><textarea id="memorySubjects" rows="4" placeholder="Matérias fortes/fracas, temas difíceis"></textarea></label>
+            <label class="memory-field"><span>Provas futuras</span><textarea id="memoryExams" rows="4" placeholder="Datas de prova, simulados, vestibulares"></textarea></label>
+            <label class="memory-field"><span>Preferências</span><textarea id="memoryPreferences" rows="4" placeholder="Como você prefere estudar, revisar e receber respostas"></textarea></label>
+            <label class="memory-field"><span>Notas recentes</span><textarea id="memoryNotes" rows="5" placeholder="Resumo de fatos importantes entre conversas"></textarea></label>
+            <div class="memory-actions">
+              <button class="solver-submit" type="submit">Salvar memória</button>
+              <button class="memory-clear" id="memoryClear" type="button">Limpar memória</button>
+            </div>
+          </form>
+        </div>
+      </section>
     </main>
     <!-- ━━━ Bottom Navigation (mobile) ━━━ -->
 <nav class="bottom-nav" id="bottomNav" aria-label="Navegação mobile">

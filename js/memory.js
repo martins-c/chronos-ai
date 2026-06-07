@@ -49,6 +49,23 @@ export function saveMemory(memory) {
   window.dispatchEvent(new CustomEvent('chronos:memory'));
 }
 
+export function clearMemory() {
+  localStorage.removeItem(MEMORY_KEY);
+  window.dispatchEvent(new CustomEvent('chronos:memory'));
+}
+
+export function replaceMemory(patch) {
+  const memory = readMemory();
+  saveMemory({
+    ...memory,
+    ...patch,
+    profile: {
+      ...memory.profile,
+      ...(patch.profile || {}),
+    },
+  });
+}
+
 export function rememberOnboarding({ name, course, goal }) {
   const memory = readMemory();
   memory.profile = {
