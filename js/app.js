@@ -30,6 +30,7 @@ import { initUploadsView } from './uploads.js';
 import { initAnalyticsView } from './analytics.js';
 import { initMaterialContext } from './material-context.js';
 import { initSolverView } from './solver.js';
+import { getMemoryContext, rememberMessage, rememberOnboarding } from './memory.js';
 
 // ━━━ DOM References ━━━
 
@@ -214,6 +215,7 @@ async function handleSendMessage(text) {
   };
   currentConversation.messages.push(userMessage);
   saveConversation(currentConversation);
+  rememberMessage('user', trimmedText);
   refreshChatList();
 
   chat.renderMessage(userMessage);
@@ -230,14 +232,16 @@ async function handleSendMessage(text) {
     content: m.content,
   }));
   const materialContextText = materialContext.getContextText();
+  const memoryContextText = getMemoryContext();
 
-  if (materialContextText && apiMessages.length) {
+  if ((memoryContextText || materialContextText) && apiMessages.length) {
     const lastMessage = apiMessages[apiMessages.length - 1];
     lastMessage.content = [
+      memoryContextText,
       materialContextText,
       'Mensagem do usuario:',
       lastMessage.content,
-    ].join('\n\n');
+    ].filter(Boolean).join('\n\n');
   }
 
   chat.removeTypingIndicator();
@@ -419,6 +423,7 @@ function bindEvents() {
  function finishOnboarding() {
    const { name, course, goal } = onboardingData;
    localStorage.setItem(SAVED_USER_KEY, JSON.stringify({ name, course, goal }));
+   rememberOnboarding({ name, course, goal });
    setWelcomed();
    ui.hideWelcome();
 
@@ -456,6 +461,7 @@ function bindEvents() {
    try {
      const user = JSON.parse(savedUser);
      if (user.name) {
+       rememberOnboarding(user);
        setWelcomed();
        ui.hideWelcome();
        if (earlyAccessScreen) earlyAccessScreen.style.display = 'none';

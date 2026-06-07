@@ -6,6 +6,8 @@
 import {
   getProductivityStats,
   getWeeklyFocusData,
+  getAllPlanItems,
+  getAllTasks,
   togglePlanItem,
   formatMinutes,
   DIFFICULTY_LABELS,
@@ -49,6 +51,69 @@ function formatFocusTotal(seconds) {
   return `${m}m`;
 }
 
+function dateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getFocusEventDates() {
+  const dates = new Set();
+  try {
+    const raw = localStorage.getItem('chronos_focus_stats');
+    const focusStats = raw ? JSON.parse(raw) : null;
+    const sessions = Array.isArray(focusStats?.sessions) ? focusStats.sessions : [];
+    sessions.forEach((session) => {
+      if (session.completedAt) dates.add(dateKey(new Date(session.completedAt)));
+    });
+    if (focusStats?.todayDate && focusStats.totalFocusSecondsToday > 0) {
+      dates.add(focusStats.todayDate);
+    }
+  } catch {}
+  return dates;
+}
+
+function renderSmartCalendar() {
+  const calendar = document.querySelector('.dash-calendar');
+  if (!calendar) return;
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const today = now.getDate();
+  const firstDay = new Date(year, month, 1);
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const focusDates = getFocusEventDates();
+  const planDates = new Set(getAllPlanItems().map((item) => item.date).filter(Boolean));
+  const taskDates = new Set(
+    getAllTasks()
+      .filter((task) => task.completedAt)
+      .map((task) => dateKey(new Date(task.completedAt)))
+  );
+  const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+  const cells = weekDays.map((day) => `<span class="dash-cal-day head">${day}</span>`);
+
+  for (let i = 0; i < firstDay.getDay(); i += 1) {
+    cells.push('<span class="dash-cal-day is-empty"></span>');
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const current = new Date(year, month, day);
+    const key = dateKey(current);
+    const classes = ['dash-cal-day'];
+    if (day === today) classes.push('today');
+    if (planDates.has(key) || focusDates.has(key) || taskDates.has(key)) classes.push('has-event');
+    cells.push(`<span class="${classes.join(' ')}">${day}</span>`);
+  }
+
+  calendar.innerHTML = cells.join('');
+  calendar.setAttribute(
+    'aria-label',
+    now.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+  );
+}
+
 export function initDashboard({ focusMode, navigation }) {
   document.querySelectorAll('[data-action="open-focus"]').forEach((el) => {
     el.addEventListener('click', () => focusMode.open());
@@ -74,6 +139,7 @@ export function initDashboard({ focusMode, navigation }) {
   }
 
   updateGreeting();
+  renderSmartCalendar();
 
   const dashFocusTime = document.getElementById('dashFocusTime');
   const dashFocusMeta = document.getElementById('dashFocusMeta');
@@ -158,6 +224,7 @@ export function initDashboard({ focusMode, navigation }) {
     }
 
     renderWeeklyChart();
+    renderSmartCalendar();
 
     if (!dashPlanList) return;
 
