@@ -445,6 +445,7 @@
   .chat-input-area {
     padding: var(--space-4) var(--space-3) var(--space-6);
   }
+}
   /* =========================
    EARLY ACCESS SCREEN
 ========================= */
@@ -737,7 +738,6 @@
   .view-chat {
     height: 100dvh;
   }
-}
 }
 
 /* Final guard: bottom navigation is mobile-only. */

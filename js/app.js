@@ -270,6 +270,8 @@ async function handleSendMessage(text) {
       currentAbortController = null;
     },
     (errorMsg) => {
+      chat.cancelStreaming({ removeBubble: true });
+      chat.removeTypingIndicator();
       ui.showToast(errorMsg, 'error', 5000);
       ui.setInputDisabled(false);
       currentAbortController = null;

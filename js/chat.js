@@ -209,7 +209,7 @@ this._appendFeedbackWidget(this._streamingEl);
     this._fullStreamedText = '';
   }
 
-  cancelStreaming() {
+  cancelStreaming(options = {}) {
     this.isStreaming = false;
     this._charQueue = [];
 
@@ -219,9 +219,13 @@ this._appendFeedbackWidget(this._streamingEl);
     }
 
     if (this._streamingEl) {
-      this._streamingEl.classList.remove('message-streaming');
-      const cursor = this._streamingEl.querySelector('.streaming-cursor');
-      if (cursor) cursor.remove();
+      if (options.removeBubble) {
+        this._streamingEl.remove();
+      } else {
+        this._streamingEl.classList.remove('message-streaming');
+        const cursor = this._streamingEl.querySelector('.streaming-cursor');
+        if (cursor) cursor.remove();
+      }
     }
 
     this._streamingBubble = null;
