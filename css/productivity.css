@@ -1188,6 +1188,116 @@
   accent-color: var(--color-primary);
 }
 
+.reminder-settings {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.reminder-settings-head,
+.briefing-controls,
+.reminder-create,
+.reminder-item,
+.reminder-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.reminder-settings-head {
+  justify-content: space-between;
+}
+
+.reminder-settings-head strong {
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.reminder-settings-head p,
+.reminder-empty {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.reminder-create {
+  align-items: end;
+}
+
+.reminder-create .memory-field:first-child {
+  flex: 1;
+}
+
+.reminder-create .solver-submit {
+  min-height: 44px;
+  padding-inline: var(--space-5);
+}
+
+.briefing-controls {
+  padding-block: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.briefing-time {
+  width: 128px;
+  margin-left: auto;
+}
+
+.reminder-list {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.reminder-item {
+  justify-content: space-between;
+  min-height: 58px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.reminder-item > div:first-child {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.reminder-item strong {
+  overflow-wrap: anywhere;
+}
+
+.reminder-item span {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.reminder-item.is-overdue {
+  border-color: rgba(var(--color-primary-rgb), 0.4);
+}
+
+.reminder-actions button {
+  padding: 7px 10px;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.reminder-actions button:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-light);
+}
+
+.reminder-empty.hidden {
+  display: none;
+}
+
 .memory-clear {
   min-height: 44px;
   padding: 0 var(--space-5);
@@ -1221,6 +1331,32 @@
 
   .voice-settings {
     grid-template-columns: 1fr;
+  }
+
+  .reminder-settings-head,
+  .reminder-create,
+  .briefing-controls,
+  .reminder-item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .reminder-settings-head .memory-clear,
+  .reminder-create .solver-submit,
+  .briefing-time {
+    width: 100%;
+  }
+
+  .briefing-time {
+    margin-left: 0;
+  }
+
+  .reminder-actions {
+    width: 100%;
+  }
+
+  .reminder-actions button {
+    flex: 1;
   }
 
   .voice-toggle {

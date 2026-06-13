@@ -714,6 +714,26 @@
               </label>
               <button class="memory-clear" id="voiceTest" type="button">Testar voz</button>
             </section>
+            <section class="reminder-settings" aria-labelledby="reminderSettingsTitle">
+              <div class="reminder-settings-head">
+                <div>
+                  <strong id="reminderSettingsTitle">Lembretes e briefing</strong>
+                  <p>Receba avisos pessoais e um resumo diário ao abrir a Chronos.</p>
+                </div>
+                <button class="memory-clear" id="notificationPermission" type="button">Ativar notificações</button>
+              </div>
+              <div class="reminder-create">
+                <label class="memory-field"><span>Lembrete</span><input id="reminderTitle" type="text" placeholder="Ex: revisar documentos"></label>
+                <label class="memory-field"><span>Data e hora</span><input id="reminderDueAt" type="datetime-local"></label>
+                <button class="solver-submit" id="reminderAdd" type="button">Adicionar</button>
+              </div>
+              <div class="briefing-controls">
+                <label class="voice-toggle"><input id="dailyBriefingEnabled" type="checkbox"><span>Briefing diário</span></label>
+                <label class="memory-field briefing-time"><span>Horário</span><input id="dailyBriefingTime" type="time" value="08:00"></label>
+              </div>
+              <div class="reminder-list" id="reminderList"></div>
+              <p class="reminder-empty" id="reminderEmpty">Nenhum lembrete pendente.</p>
+            </section>
             <div class="memory-actions">
               <button class="solver-submit" type="submit">Salvar memória</button>
               <button class="memory-clear" id="personalDataExport" type="button">Exportar backup</button>

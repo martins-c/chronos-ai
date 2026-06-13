@@ -1,5 +1,15 @@
 import { clearMemory, readMemory, replaceMemory } from './memory.js';
 import { getVoiceSettings, saveVoiceSettings, speakChronos } from './voice.js';
+import {
+  addReminder,
+  completeReminder,
+  deleteReminder,
+  formatReminderDate,
+  getReminderSettings,
+  getReminders,
+  requestNotificationPermission,
+  saveReminderSettings,
+} from './reminders.js';
 
 function toText(items) {
   return Array.isArray(items) ? items.join('\n') : '';
@@ -23,6 +33,14 @@ export function initSettingsView({ ui }) {
   const installBtn = document.getElementById('pwaInstall');
   const speakResponses = document.getElementById('voiceSpeakResponses');
   const testVoice = document.getElementById('voiceTest');
+  const notificationPermission = document.getElementById('notificationPermission');
+  const reminderTitle = document.getElementById('reminderTitle');
+  const reminderDueAt = document.getElementById('reminderDueAt');
+  const reminderAdd = document.getElementById('reminderAdd');
+  const reminderList = document.getElementById('reminderList');
+  const reminderEmpty = document.getElementById('reminderEmpty');
+  const dailyBriefingEnabled = document.getElementById('dailyBriefingEnabled');
+  const dailyBriefingTime = document.getElementById('dailyBriefingTime');
   let installPrompt = null;
   const fields = {
     name: document.getElementById('memoryName'),
@@ -51,6 +69,36 @@ export function initSettingsView({ ui }) {
         : 'Sem memória salva ainda';
     }
     if (speakResponses) speakResponses.checked = getVoiceSettings().speakResponses;
+    const reminderSettings = getReminderSettings();
+    if (dailyBriefingEnabled) dailyBriefingEnabled.checked = reminderSettings.dailyBriefing;
+    if (dailyBriefingTime) dailyBriefingTime.value = reminderSettings.briefingTime;
+    if (notificationPermission && 'Notification' in window) {
+      const labels = { granted: 'Notificações ativas', denied: 'Notificações bloqueadas', default: 'Ativar notificações' };
+      notificationPermission.textContent = labels[Notification.permission];
+      notificationPermission.disabled = Notification.permission === 'granted';
+    }
+    renderReminders();
+  }
+
+  function escapeHtml(value) {
+    const div = document.createElement('div');
+    div.textContent = String(value || '');
+    return div.innerHTML;
+  }
+
+  function renderReminders() {
+    if (!reminderList) return;
+    const items = getReminders().filter((item) => !item.completed);
+    reminderEmpty?.classList.toggle('hidden', items.length > 0);
+    reminderList.innerHTML = items.map((item) => `
+      <article class="reminder-item${item.dueAt <= Date.now() ? ' is-overdue' : ''}" data-reminder-id="${item.id}">
+        <div><strong>${escapeHtml(item.title)}</strong><span>${formatReminderDate(item.dueAt)}</span></div>
+        <div class="reminder-actions">
+          <button type="button" data-action="complete" aria-label="Concluir lembrete">Concluir</button>
+          <button type="button" data-action="delete" aria-label="Excluir lembrete">Excluir</button>
+        </div>
+      </article>
+    `).join('');
   }
 
   form?.addEventListener('submit', (event) => {
@@ -165,7 +213,50 @@ export function initSettingsView({ ui }) {
     speakChronos('Chronos online. Sistema de voz funcionando.', true);
   });
 
+  notificationPermission?.addEventListener('click', async () => {
+    const permission = await requestNotificationPermission();
+    render();
+    ui.showToast?.(
+      permission === 'granted' ? 'Notificações ativadas' : 'Permissão de notificações não concedida',
+      permission === 'granted' ? 'info' : 'error'
+    );
+  });
+
+  reminderAdd?.addEventListener('click', () => {
+    const title = reminderTitle?.value.trim();
+    const dueAt = reminderDueAt?.value ? new Date(reminderDueAt.value).getTime() : NaN;
+    if (!title || !Number.isFinite(dueAt) || dueAt <= Date.now()) {
+      ui.showToast?.('Informe um lembrete e uma data futura.', 'error');
+      return;
+    }
+    addReminder(title, dueAt);
+    reminderTitle.value = '';
+    reminderDueAt.value = '';
+    ui.showToast?.('Lembrete criado');
+    renderReminders();
+  });
+
+  reminderList?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-action]');
+    const item = event.target.closest('[data-reminder-id]');
+    if (!button || !item) return;
+    if (button.dataset.action === 'complete') completeReminder(item.dataset.reminderId);
+    if (button.dataset.action === 'delete') deleteReminder(item.dataset.reminderId);
+    renderReminders();
+  });
+
+  dailyBriefingEnabled?.addEventListener('change', () => {
+    saveReminderSettings({ dailyBriefing: dailyBriefingEnabled.checked });
+    ui.showToast?.(dailyBriefingEnabled.checked ? 'Briefing diário ativado' : 'Briefing diário desativado');
+  });
+
+  dailyBriefingTime?.addEventListener('change', () => {
+    saveReminderSettings({ briefingTime: dailyBriefingTime.value || '08:00', lastBriefingDate: '' });
+    ui.showToast?.('Horário do briefing atualizado');
+  });
+
   window.addEventListener('chronos:memory', render);
+  window.addEventListener('chronos:reminders', renderReminders);
   render();
 
   return { render };

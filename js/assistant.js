@@ -7,6 +7,7 @@ import {
   getProductivityStats,
 } from './productivity-storage.js';
 import { readMemory } from './memory.js';
+import { addReminder, formatReminderDate, getReminders, parseReminderCommand } from './reminders.js';
 
 function normalize(text) {
   return String(text || '')
@@ -24,7 +25,7 @@ function cleanActionText(text, patterns) {
   return result.replace(/^[,:-]+/, '').trim();
 }
 
-function buildBriefing() {
+export function buildBriefing() {
   const memory = readMemory();
   const stats = getProductivityStats();
   const plan = getPlanForDate();
@@ -81,6 +82,25 @@ export function executeAssistantCommand(text, { navigation, focusMode }) {
   if (['iniciar foco', 'abrir modo foco', 'comecar foco', 'modo foco'].some((term) => command.includes(term))) {
     focusMode.open();
     return { handled: true, reply: 'Modo Foco aberto. Escolha a duracao e inicie quando estiver pronto.' };
+  }
+
+  const reminderRequest = parseReminderCommand(text);
+  if (reminderRequest) {
+    if (reminderRequest.error) return { handled: true, reply: reminderRequest.error };
+    const reminder = addReminder(reminderRequest.title, reminderRequest.dueAt);
+    return {
+      handled: true,
+      reply: `Lembrete criado: ${reminder.title}, ${formatReminderDate(reminder.dueAt)}.`,
+    };
+  }
+
+  if (['meus lembretes', 'listar lembretes', 'proximos lembretes'].some((term) => command.includes(term))) {
+    const upcoming = getReminders().filter((item) => !item.completed && item.dueAt > Date.now()).slice(0, 5);
+    if (!upcoming.length) return { handled: true, reply: 'Voce nao tem lembretes futuros.' };
+    return {
+      handled: true,
+      reply: ['Seus proximos lembretes:', ...upcoming.map((item) => `- ${item.title}: ${formatReminderDate(item.dueAt)}`)].join('\n'),
+    };
   }
 
   if (/^(criar|adicionar|nova) tarefa\b/.test(command)) {

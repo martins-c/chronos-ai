@@ -31,8 +31,9 @@ import { initMaterialContext } from './material-context.js';
 import { initSolverView } from './solver.js';
 import { ensurePersonalMemory, getMemoryContext, rememberMessage, rememberOnboarding } from './memory.js';
 import { initSettingsView } from './settings.js';
-import { executeAssistantCommand } from './assistant.js';
+import { buildBriefing, executeAssistantCommand } from './assistant.js';
 import { initVoiceInput, speakChronos } from './voice.js';
+import { initReminderEngine } from './reminders.js';
 
 // ━━━ DOM References ━━━
 
@@ -129,6 +130,8 @@ initVoiceInput({
   ui,
   onTranscript: (text) => handleSendMessage(text),
 });
+
+initReminderEngine({ ui, getBriefing: buildBriefing });
 
 // ━━━ State ━━━
 
