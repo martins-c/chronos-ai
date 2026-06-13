@@ -1,0 +1,131 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #000000;
+  color: #FFFFFF;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: #000000;
+}
+
+button, input { font: inherit; }
+
+.login-shell {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 32px 20px;
+}
+
+.login-panel {
+  width: min(100%, 400px);
+  padding: 40px;
+  background: #0A0A0A;
+  border: 1px solid #1F1F1F;
+  border-radius: 8px;
+}
+
+.login-logo {
+  display: block;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 32px;
+  border-radius: 12px;
+}
+
+.login-heading span {
+  color: #7DD3FC;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.login-heading h1 {
+  margin: 10px 0 8px;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.login-heading p {
+  margin: 0;
+  color: #A1A1AA;
+  line-height: 1.6;
+}
+
+.login-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.login-form label {
+  color: #A1A1AA;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.password-field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  min-height: 50px;
+  background: #111111;
+  border: 1px solid #1F1F1F;
+  border-radius: 6px;
+}
+
+.password-field:focus-within { border-color: #7DD3FC; }
+
+.password-field input {
+  min-width: 0;
+  padding: 0 16px;
+  color: #FFFFFF;
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.password-field button {
+  padding: 0 14px;
+  color: #A1A1AA;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.login-error {
+  min-height: 20px;
+  margin: 0;
+  color: #FFFFFF;
+  font-size: 13px;
+}
+
+.login-submit {
+  min-height: 50px;
+  color: #000000;
+  font-weight: 700;
+  background: #FFFFFF;
+  border: 1px solid #FFFFFF;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.login-submit:hover { background: #F4F4F5; }
+.login-submit:disabled { opacity: 0.55; cursor: wait; }
+
+@media (max-width: 480px) {
+  .login-shell { padding: 0; }
+  .login-panel {
+    min-height: 100dvh;
+    padding: max(32px, env(safe-area-inset-top)) 24px max(32px, env(safe-area-inset-bottom));
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}

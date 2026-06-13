@@ -4,6 +4,7 @@ import {
   saveMaterials,
   updateMaterial,
 } from './materials-storage.js';
+import { requireActiveSession } from './auth.js';
 
 const MAX_FILE_BYTES = 4 * 1024 * 1024;
 const sessionFiles = new Map();
@@ -105,6 +106,7 @@ async function analyzeFile(file) {
       },
     }),
   });
+  if (requireActiveSession(response)) throw new Error('Sessao expirada.');
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw new Error(payload.error || `Erro ${response.status}`);

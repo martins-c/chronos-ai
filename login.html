@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Chronos — Acesso privado</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/chronos.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/chronos-192.png">
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+  <main class="login-shell">
+    <section class="login-panel" aria-labelledby="loginTitle">
+      <img class="login-logo" src="/icons/chronos.svg" alt="">
+      <div class="login-heading">
+        <span>CHRONOS</span>
+        <h1 id="loginTitle">Acesso privado</h1>
+        <p>Entre para abrir seu workspace pessoal.</p>
+      </div>
+
+      <form id="loginForm" class="login-form">
+        <label for="password">Senha</label>
+        <div class="password-field">
+          <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>
+          <button id="togglePassword" type="button" aria-label="Mostrar senha" title="Mostrar senha">Ver</button>
+        </div>
+        <p class="login-error" id="loginError" role="alert" aria-live="polite"></p>
+        <button class="login-submit" id="loginSubmit" type="submit">Entrar</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const password = document.getElementById('password');
+    const submit = document.getElementById('loginSubmit');
+    const error = document.getElementById('loginError');
+    const toggle = document.getElementById('togglePassword');
+
+    toggle.addEventListener('click', () => {
+      const visible = password.type === 'text';
+      password.type = visible ? 'password' : 'text';
+      toggle.textContent = visible ? 'Ver' : 'Ocultar';
+      toggle.setAttribute('aria-label', visible ? 'Mostrar senha' : 'Ocultar senha');
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      error.textContent = '';
+      submit.disabled = true;
+      submit.textContent = 'Entrando...';
+
+      try {
+        const response = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: password.value }),
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || 'Nao foi possivel entrar.');
+        window.location.replace('/');
+      } catch (failure) {
+        error.textContent = failure.message;
+        password.select();
+      } finally {
+        submit.disabled = false;
+        submit.textContent = 'Entrar';
+      }
+    });
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>

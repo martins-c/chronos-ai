@@ -18,6 +18,9 @@ export function initSettingsView({ ui }) {
   const exportBtn = document.getElementById('personalDataExport');
   const importBtn = document.getElementById('personalDataImport');
   const importFile = document.getElementById('personalDataFile');
+  const logoutBtn = document.getElementById('privateLogout');
+  const installBtn = document.getElementById('pwaInstall');
+  let installPrompt = null;
   const fields = {
     name: document.getElementById('memoryName'),
     course: document.getElementById('memoryCourse'),
@@ -115,6 +118,38 @@ export function initSettingsView({ ui }) {
     } finally {
       importFile.value = '';
     }
+  });
+
+  logoutBtn?.addEventListener('click', async () => {
+    logoutBtn.disabled = true;
+    try {
+      await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'logout' }),
+      });
+    } finally {
+      window.location.replace('/login.html');
+    }
+  });
+
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    installPrompt = event;
+    if (installBtn) installBtn.hidden = false;
+  });
+
+  installBtn?.addEventListener('click', async () => {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    installPrompt = null;
+    installBtn.hidden = true;
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installPrompt = null;
+    if (installBtn) installBtn.hidden = true;
+    ui.showToast?.('Chronos instalada');
   });
 
   window.addEventListener('chronos:memory', render);

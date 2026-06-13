@@ -4,6 +4,8 @@
 //  Zero streaming, zero API key no frontend
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+import { requireActiveSession } from './auth.js';
+
 /**
  * Send messages to the server-side API and get AI response.
  * Simple JSON — no streaming, no SSE, no ReadableStream.
@@ -25,6 +27,8 @@ export function sendMessage(messages, onChunk, onDone, onError) {
         body: JSON.stringify({ messages }),
         signal: controller.signal,
       });
+
+      if (requireActiveSession(response)) return;
 
       // Parse JSON response
       const data = await response.json();

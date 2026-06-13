@@ -1,3 +1,5 @@
+import { requireActiveSession } from './auth.js';
+
 function escapeHtml(value) {
   return String(value || '')
     .replaceAll('&', '&amp;')
@@ -167,6 +169,7 @@ export function initSolverView({ ui }) {
           level: level?.value || '',
         }),
       });
+      if (requireActiveSession(response)) return;
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.error || `Erro ${response.status}`);
 
