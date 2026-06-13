@@ -12,6 +12,7 @@ import {
   formatMinutes,
   DIFFICULTY_LABELS,
 } from './productivity-storage.js';
+import { readMemory } from './memory.js';
 
 const RING_CIRCUMFERENCE = 2 * Math.PI * 45;
 
@@ -32,13 +33,7 @@ function updateGreeting() {
   const heroTitle = document.querySelector('.dash-greeting h1');
   if (!heroTitle) return;
 
-  const saved = localStorage.getItem('chronos_user');
-  let name = 'estudante';
-  if (saved) {
-    try {
-      name = JSON.parse(saved).name || name;
-    } catch {}
-  }
+  const name = readMemory().profile?.name || 'Martins';
   heroTitle.textContent = getGreeting(name);
 }
 
@@ -148,6 +143,7 @@ export function initDashboard({ focusMode, navigation }) {
   const dashStatFocusToday = document.getElementById('dashStatFocusToday');
   const dashStatSessions = document.getElementById('dashStatSessions');
   const dashStatTasksDone = document.getElementById('dashStatTasksDone');
+  const dashStatProductivity = document.getElementById('dashStatProductivity');
   const dashPlanList = document.getElementById('dashPlanList');
   const dashPlanEmpty = document.getElementById('dashPlanEmpty');
   const dashChartBars = document.querySelector('.dash-chart-bars');
@@ -223,6 +219,12 @@ export function initDashboard({ focusMode, navigation }) {
       dashStatTasksDone.textContent = String(stats.tasksCompletedToday);
     }
 
+    if (dashStatProductivity) {
+      const total = stats.tasksActive + stats.tasksCompletedToday + stats.planTotalToday;
+      const completed = stats.tasksCompletedToday + stats.planToday.filter((item) => item.completed).length;
+      dashStatProductivity.textContent = total > 0 ? `${Math.round((completed / total) * 100)}%` : '0%';
+    }
+
     renderWeeklyChart();
     renderSmartCalendar();
 
@@ -261,5 +263,6 @@ export function initDashboard({ focusMode, navigation }) {
 
   focusMode.subscribe(syncFocusUI);
   window.addEventListener('chronos:productivity', syncProductivityUI);
+  window.addEventListener('chronos:memory', updateGreeting);
   syncProductivityUI();
 }

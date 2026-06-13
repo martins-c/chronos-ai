@@ -13,13 +13,13 @@ export class UIManager {
   // ━━━ Welcome Screen ━━━
 
   showWelcome() {
-    this.els.welcomeScreen.classList.remove('hidden');
+    this.els.welcomeScreen?.classList.remove('hidden');
     this.els.app.classList.remove('active');
     this.els.app.style.display = 'none';
   }
 
   hideWelcome() {
-    this.els.welcomeScreen.classList.add('hidden');
+    this.els.welcomeScreen?.classList.add('hidden');
     document.getElementById('earlyAccessScreen')?.style.setProperty('display', 'none');
     this.els.app.style.display = 'flex';
     this.els.app.classList.add('active');

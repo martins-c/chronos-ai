@@ -1,4 +1,5 @@
 const MEMORY_KEY = 'chronos_user_memory';
+const PERSONAL_PROFILE = { name: 'Martins', course: '' };
 
 const MEMORY_FIELDS = {
   goals: ['objetivo', 'meta', 'quero', 'preciso', 'passar', 'melhorar'],
@@ -42,6 +43,18 @@ function baseMemory() {
 
 export function readMemory() {
   return { ...baseMemory(), ...safeParse(localStorage.getItem(MEMORY_KEY), {}) };
+}
+
+export function ensurePersonalMemory() {
+  const memory = readMemory();
+  if (memory.profile?.name) return memory;
+
+  const next = {
+    ...memory,
+    profile: { ...PERSONAL_PROFILE, ...(memory.profile || {}), name: PERSONAL_PROFILE.name },
+  };
+  saveMemory(next);
+  return next;
 }
 
 export function saveMemory(memory) {

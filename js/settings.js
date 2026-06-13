@@ -15,6 +15,9 @@ export function initSettingsView({ ui }) {
   const form = document.getElementById('memoryForm');
   const clearBtn = document.getElementById('memoryClear');
   const updated = document.getElementById('memoryUpdatedAt');
+  const exportBtn = document.getElementById('personalDataExport');
+  const importBtn = document.getElementById('personalDataImport');
+  const importFile = document.getElementById('personalDataFile');
   const fields = {
     name: document.getElementById('memoryName'),
     course: document.getElementById('memoryCourse'),
@@ -66,6 +69,52 @@ export function initSettingsView({ ui }) {
     clearMemory();
     render();
     ui.showToast?.('Memória limpa');
+  });
+
+  exportBtn?.addEventListener('click', () => {
+    const data = {};
+    for (let index = 0; index < localStorage.length; index += 1) {
+      const key = localStorage.key(index);
+      if (key?.startsWith('chronos_')) data[key] = localStorage.getItem(key);
+    }
+
+    const blob = new Blob(
+      [JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), data }, null, 2)],
+      { type: 'application/json' }
+    );
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `chronos-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    ui.showToast?.('Backup exportado');
+  });
+
+  importBtn?.addEventListener('click', () => importFile?.click());
+
+  importFile?.addEventListener('change', async () => {
+    const file = importFile.files?.[0];
+    if (!file) return;
+
+    try {
+      const backup = JSON.parse(await file.text());
+      if (!backup?.data || typeof backup.data !== 'object') {
+        throw new Error('Arquivo de backup inválido.');
+      }
+
+      Object.entries(backup.data).forEach(([key, value]) => {
+        if (key.startsWith('chronos_') && typeof value === 'string') {
+          localStorage.setItem(key, value);
+        }
+      });
+      ui.showToast?.('Backup restaurado. Recarregando...');
+      setTimeout(() => window.location.reload(), 700);
+    } catch (error) {
+      ui.showToast?.(error.message || 'Não consegui restaurar o backup.', 'error');
+    } finally {
+      importFile.value = '';
+    }
   });
 
   window.addEventListener('chronos:memory', render);

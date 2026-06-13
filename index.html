@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Chronos AI — Seu mentor inteligente de organização acadêmica. Crie rotinas de estudo personalizadas, reduza ansiedade e aumente sua produtividade.">
-  <meta name="theme-color" content="#0a0a0f">
+  <meta name="description" content="Chronos AI — workspace pessoal de Martins para organização, estudo, foco e decisões.">
+  <meta name="theme-color" content="#000000">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <title>Chronos AI — Organização Acadêmica Inteligente</title>
+  <title>Chronos AI — Workspace pessoal</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,7 +39,7 @@
   </div>
 
   <!-- ━━━ Welcome Screen ━━━ -->
-  <div class="welcome-screen" id="welcomeScreen">
+  <div class="welcome-screen hidden" id="welcomeScreen" style="display:none">
     <div class="welcome-content">
       <div class="welcome-logo">
         <!-- Animated ring -->
@@ -79,7 +79,7 @@
 
   <!-- ━━━ App Container ━━━ -->
 <!-- ===== Onboarding Screen ===== -->
-<div class="early-access-screen" id="earlyAccessScreen">
+<div class="early-access-screen" id="earlyAccessScreen" style="display:none">
   <div class="early-access-card">
 
     <div class="early-access-logo">
@@ -125,7 +125,7 @@
 </div>
   
   
-  <div class="app" id="app" style="display:none;">
+  <div class="app active" id="app" style="display:flex;">
 
     <!-- Premium Nav Sidebar -->
     <aside class="sidebar" id="sidebar">
@@ -197,10 +197,10 @@
       <div class="sidebar-footer sidebar-footer--nav">
         <div class="sidebar-version-card">
           <strong>Chronos AI</strong>
-          <span>v1.0 · Produtividade OS</span>
+          <span>Workspace pessoal</span>
           <div class="sidebar-version-status">
             <span class="status-dot"></span>
-            Sistema ativo
+            Perfil Martins
           </div>
         </div>
         <button class="btn-clear-history" id="btnClearHistory" type="button">
@@ -234,8 +234,8 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
           <div class="dash-greeting">
-            <h1>Boa noite, estudante ⚡</h1>
-            <p>Seu centro de comando acadêmico. Foco, plano e insights em um só lugar.</p>
+            <h1>Boa noite, Martins</h1>
+            <p>Seu espaço pessoal para foco, planejamento, estudo e decisões.</p>
           </div>
           <time class="dash-date" id="dashDate" datetime=""></time>
         </header>
@@ -281,7 +281,7 @@
               </div>
               <div class="dash-stats">
                 <div class="dash-stat"><div class="dash-stat-value" id="dashStatFocusToday">0m</div><div class="dash-stat-label">Foco hoje</div></div>
-                <div class="dash-stat"><div class="dash-stat-value">87%</div><div class="dash-stat-label">Produtividade</div></div>
+                <div class="dash-stat"><div class="dash-stat-value" id="dashStatProductivity">0%</div><div class="dash-stat-label">Conclusão</div></div>
                 <div class="dash-stat"><div class="dash-stat-value" id="dashStatSessions">0</div><div class="dash-stat-label">Sessões</div></div>
                 <div class="dash-stat"><div class="dash-stat-value" id="dashStatTasksDone">0</div><div class="dash-stat-label">Tarefas feitas</div></div>
               </div>
@@ -298,7 +298,7 @@
                   <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
                 </div>
               </div>
-              <p class="dash-assistant-copy">Pronto para organizar sua rotina. Toque para conversar.</p>
+              <p class="dash-assistant-copy">Seu contexto, planos e materiais em uma conversa contínua.</p>
             </article>
 
             <article class="dash-card dash-card--upload">
@@ -318,8 +318,8 @@
                 <h3 class="dash-card-title">Insights Inteligentes</h3>
               </div>
               <div class="dash-insight-list">
-                <p class="dash-insight">Você rende mais entre 14h e 17h. Considere matérias pesadas nesse bloco.</p>
-                <p class="dash-insight">3 dias sem revisar Física — agende 40 min amanhã.</p>
+                <p class="dash-insight">Os insights serão construídos a partir do seu uso real da Chronos.</p>
+                <p class="dash-insight">Registre foco, tarefas e planos para acompanhar padrões sem dados inventados.</p>
               </div>
             </article>
 
@@ -694,6 +694,9 @@
             <label class="memory-field"><span>Notas recentes</span><textarea id="memoryNotes" rows="5" placeholder="Resumo de fatos importantes entre conversas"></textarea></label>
             <div class="memory-actions">
               <button class="solver-submit" type="submit">Salvar memória</button>
+              <button class="memory-clear" id="personalDataExport" type="button">Exportar backup</button>
+              <button class="memory-clear" id="personalDataImport" type="button">Restaurar backup</button>
+              <input id="personalDataFile" type="file" accept="application/json,.json" hidden>
               <button class="memory-clear" id="memoryClear" type="button">Limpar memória</button>
             </div>
           </form>

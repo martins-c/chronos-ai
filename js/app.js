@@ -13,7 +13,6 @@ import {
   setActiveConversationId,
   getSettings,
   saveSettings,
-  hasBeenWelcomed,
   setWelcomed,
   createConversation,
 } from './storage.js';
@@ -30,7 +29,7 @@ import { initUploadsView } from './uploads.js';
 import { initAnalyticsView } from './analytics.js';
 import { initMaterialContext } from './material-context.js';
 import { initSolverView } from './solver.js';
-import { getMemoryContext, rememberMessage, rememberOnboarding } from './memory.js';
+import { ensurePersonalMemory, getMemoryContext, rememberMessage, rememberOnboarding } from './memory.js';
 import { initSettingsView } from './settings.js';
 
 // ━━━ DOM References ━━━
@@ -129,14 +128,11 @@ let currentAbortController = null;
 // ━━━ Initialization ━━━
 
 function init() {
-  if (hasBeenWelcomed()) {
-    ui.hideWelcome();
-    loadLastConversation();
-    navigation.setView('home');
-  } else {
-    ui.showWelcome();
-  }
-
+  ensurePersonalMemory();
+  setWelcomed();
+  ui.hideWelcome();
+  loadLastConversation();
+  navigation.setView('home');
   refreshChatList();
   bindEvents();
 }
