@@ -31,6 +31,8 @@ import { initMaterialContext } from './material-context.js';
 import { initSolverView } from './solver.js';
 import { ensurePersonalMemory, getMemoryContext, rememberMessage, rememberOnboarding } from './memory.js';
 import { initSettingsView } from './settings.js';
+import { executeAssistantCommand } from './assistant.js';
+import { initVoiceInput, speakChronos } from './voice.js';
 
 // ━━━ DOM References ━━━
 
@@ -56,6 +58,7 @@ const elements = {
   inputContainer: document.getElementById('inputContainer'),
   messageInput: document.getElementById('messageInput'),
   btnSend: document.getElementById('btnSend'),
+  btnVoice: document.getElementById('btnVoice'),
   btnSettings: document.getElementById('btnSettings'),
   btnFocus: document.getElementById('btnFocus'),
   focusOverlay: document.getElementById('focusOverlay'),
@@ -119,6 +122,13 @@ uploadsView = initUploadsView({
 analyticsView = initAnalyticsView({ ui });
 
 initDashboard({ focusMode, navigation });
+
+initVoiceInput({
+  button: elements.btnVoice,
+  input: elements.messageInput,
+  ui,
+  onTranscript: (text) => handleSendMessage(text),
+});
 
 // ━━━ State ━━━
 
@@ -223,6 +233,22 @@ async function handleSendMessage(text) {
   ui.resetInput(elements.messageInput);
   ui.updateSendButton(false);
 
+  const commandResult = executeAssistantCommand(trimmedText, { navigation, focusMode });
+  if (commandResult.handled) {
+    const aiMessage = {
+      role: 'assistant',
+      content: commandResult.reply,
+      timestamp: Date.now(),
+    };
+    currentConversation.messages.push(aiMessage);
+    saveConversation(currentConversation);
+    chat.renderMessage(aiMessage);
+    chat.scrollToBottom();
+    refreshChatList();
+    speakChronos(commandResult.reply);
+    return;
+  }
+
   chat.showTypingIndicator();
   ui.setInputDisabled(true);
 
@@ -262,6 +288,7 @@ async function handleSendMessage(text) {
       refreshChatList();
 
       chat.finishStreaming(fullText);
+      speakChronos(fullText);
       ui.setInputDisabled(false);
       currentAbortController = null;
     },

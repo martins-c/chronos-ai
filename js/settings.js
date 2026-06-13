@@ -1,4 +1,5 @@
 import { clearMemory, readMemory, replaceMemory } from './memory.js';
+import { getVoiceSettings, saveVoiceSettings, speakChronos } from './voice.js';
 
 function toText(items) {
   return Array.isArray(items) ? items.join('\n') : '';
@@ -20,6 +21,8 @@ export function initSettingsView({ ui }) {
   const importFile = document.getElementById('personalDataFile');
   const logoutBtn = document.getElementById('privateLogout');
   const installBtn = document.getElementById('pwaInstall');
+  const speakResponses = document.getElementById('voiceSpeakResponses');
+  const testVoice = document.getElementById('voiceTest');
   let installPrompt = null;
   const fields = {
     name: document.getElementById('memoryName'),
@@ -47,6 +50,7 @@ export function initSettingsView({ ui }) {
         ? `Atualizada ${new Date(memory.updatedAt).toLocaleString('pt-BR')}`
         : 'Sem memória salva ainda';
     }
+    if (speakResponses) speakResponses.checked = getVoiceSettings().speakResponses;
   }
 
   form?.addEventListener('submit', (event) => {
@@ -150,6 +154,15 @@ export function initSettingsView({ ui }) {
     installPrompt = null;
     if (installBtn) installBtn.hidden = true;
     ui.showToast?.('Chronos instalada');
+  });
+
+  speakResponses?.addEventListener('change', () => {
+    saveVoiceSettings({ speakResponses: speakResponses.checked });
+    ui.showToast?.(speakResponses.checked ? 'Respostas por voz ativadas' : 'Respostas por voz desativadas');
+  });
+
+  testVoice?.addEventListener('click', () => {
+    speakChronos('Chronos online. Sistema de voz funcionando.', true);
   });
 
   window.addEventListener('chronos:memory', render);

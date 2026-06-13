@@ -184,7 +184,8 @@ body {
 .solver-field select,
 .prod-field input,
 .prod-field select,
-.modal-input {
+.modal-input,
+.btn-voice {
   background: #0A0A0A !important;
   border: 1px solid #1F1F1F !important;
   color: #FFFFFF !important;
@@ -237,6 +238,12 @@ body {
   border-color: #2A2A2A !important;
   color: #FFFFFF !important;
   box-shadow: none !important;
+}
+
+.btn-voice.is-listening {
+  color: #7DD3FC !important;
+  background: rgba(125, 211, 252, 0.1) !important;
+  border-color: rgba(125, 211, 252, 0.5) !important;
 }
 
 .dash-cal-day.today,

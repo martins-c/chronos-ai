@@ -523,6 +523,7 @@
               <button class="chip" data-prompt="Trabalho e estudo ao mesmo tempo, minha rotina tá caótica">😴 Trabalho e estudo</button>
               <button class="chip" data-view="solver">Resolver questão</button>
               <button class="chip" data-view="uploads">Analisar material</button>
+              <button class="chip" data-prompt="Briefing do dia">Briefing do dia</button>
             </div>
           </div>
         </div>
@@ -557,6 +558,12 @@
               rows="1"
               aria-label="Mensagem"
             ></textarea>
+            <button class="btn-voice" id="btnVoice" type="button" aria-label="Falar com a Chronos" title="Falar com a Chronos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="2" width="6" height="12" rx="3"></rect>
+                <path d="M5 10a7 7 0 0014 0M12 17v5M8 22h8"></path>
+              </svg>
+            </button>
             <button class="btn-send" id="btnSend" aria-label="Enviar mensagem">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -696,6 +703,17 @@
             <label class="memory-field"><span>Provas futuras</span><textarea id="memoryExams" rows="4" placeholder="Datas de prova, simulados, vestibulares"></textarea></label>
             <label class="memory-field"><span>Preferências</span><textarea id="memoryPreferences" rows="4" placeholder="Como você prefere estudar, revisar e receber respostas"></textarea></label>
             <label class="memory-field"><span>Notas recentes</span><textarea id="memoryNotes" rows="5" placeholder="Resumo de fatos importantes entre conversas"></textarea></label>
+            <section class="voice-settings" aria-labelledby="voiceSettingsTitle">
+              <div>
+                <strong id="voiceSettingsTitle">Assistente por voz</strong>
+                <p>Use o microfone no chat e escolha se a Chronos deve ler as respostas.</p>
+              </div>
+              <label class="voice-toggle">
+                <input id="voiceSpeakResponses" type="checkbox">
+                <span>Ler respostas em voz alta</span>
+              </label>
+              <button class="memory-clear" id="voiceTest" type="button">Testar voz</button>
+            </section>
             <div class="memory-actions">
               <button class="solver-submit" type="submit">Salvar memória</button>
               <button class="memory-clear" id="personalDataExport" type="button">Exportar backup</button>
