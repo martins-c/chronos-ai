@@ -263,6 +263,12 @@ this._appendFeedbackWidget(this._streamingEl);
     // Inline code: `text`
     html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
 
+    // Clickable source links
+    html = html.replace(
+      /(https:\/\/[^\s<]+)/g,
+      '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+    );
+
     // Line breaks
     html = html.replace(/\n/g, '<br>');
 

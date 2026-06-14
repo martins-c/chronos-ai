@@ -1,4 +1,6 @@
 const VOICE_KEY = 'chronos_voice_settings';
+let currentAudio = null;
+let currentAudioUrl = '';
 
 function readSettings() {
   try {
@@ -16,8 +18,32 @@ export function saveVoiceSettings(patch) {
   localStorage.setItem(VOICE_KEY, JSON.stringify({ ...readSettings(), ...patch }));
 }
 
-export function speakChronos(text, force = false) {
-  if (!('speechSynthesis' in window) || (!force && !readSettings().speakResponses)) return;
+function stopCurrentVoice() {
+  window.speechSynthesis?.cancel();
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+  }
+  if (currentAudioUrl) {
+    URL.revokeObjectURL(currentAudioUrl);
+    currentAudioUrl = '';
+  }
+}
+
+function speakWithDevice(clean) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(clean);
+  utterance.lang = 'pt-BR';
+  utterance.rate = 0.98;
+  utterance.pitch = 0.92;
+  const voice = window.speechSynthesis.getVoices().find((item) => item.lang?.toLowerCase().startsWith('pt-br'));
+  if (voice) utterance.voice = voice;
+  window.speechSynthesis.speak(utterance);
+}
+
+export async function speakChronos(text, force = false) {
+  if (!force && !readSettings().speakResponses) return;
   const clean = String(text || '')
     .replace(/[*_`#>-]/g, ' ')
     .replace(/\s+/g, ' ')
@@ -25,14 +51,27 @@ export function speakChronos(text, force = false) {
     .slice(0, 1800);
   if (!clean) return;
 
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(clean);
-  utterance.lang = 'pt-BR';
-  utterance.rate = 1;
-  utterance.pitch = 0.95;
-  const voice = window.speechSynthesis.getVoices().find((item) => item.lang?.toLowerCase().startsWith('pt-br'));
-  if (voice) utterance.voice = voice;
-  window.speechSynthesis.speak(utterance);
+  stopCurrentVoice();
+  try {
+    const response = await fetch('/api/voice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: clean }),
+    });
+    if (!response.ok) throw new Error(`Voice ${response.status}`);
+    const blob = await response.blob();
+    currentAudioUrl = URL.createObjectURL(blob);
+    currentAudio = new Audio(currentAudioUrl);
+    currentAudio.onended = stopCurrentVoice;
+    currentAudio.onerror = () => {
+      stopCurrentVoice();
+      speakWithDevice(clean);
+    };
+    await currentAudio.play();
+  } catch {
+    stopCurrentVoice();
+    speakWithDevice(clean);
+  }
 }
 
 export function initVoiceInput({ button, input, ui, onTranscript }) {

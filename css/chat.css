@@ -584,3 +584,9 @@
   opacity: 1;
 }
 }
+.message-bubble a {
+  color: var(--color-primary);
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

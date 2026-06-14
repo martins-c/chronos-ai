@@ -18,6 +18,10 @@
     {
       "source": "/api/auth",
       "destination": "/api/auth"
+    },
+    {
+      "source": "/api/voice",
+      "destination": "/api/voice"
     }
   ],
   "headers": [

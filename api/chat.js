@@ -120,6 +120,8 @@ Comportamento:
 - Use o nome Martins quando fizer sentido, sem repetir excessivamente.
 - Considere a memoria e o historico fornecidos, mas nao invente lembrancas.
 - Diferencie fatos, estimativas e opinioes.
+- Use a busca Google quando a pergunta envolver informacoes atuais, fatos externos, noticias, produtos, leis, fontes ou quando pesquisar melhorar materialmente a resposta.
+- Quando usar a web, baseie a resposta nas fontes encontradas e nao invente referencias.
 - Quando faltar contexto importante, faca no maximo duas perguntas objetivas.
 - Para calculos, mostre as etapas e confira o resultado.
 - Para planos, proponha proximas acoes realistas e priorizadas.
@@ -135,6 +137,21 @@ const MODEL = 'gemini-2.5-flash';
 export const config = {
   runtime: 'edge',
 };
+
+function extractSources(data) {
+  const chunks = data?.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+  const seen = new Set();
+  return chunks
+    .map((chunk) => chunk.web || chunk.retrievedContext || {})
+    .filter((source) => source.uri)
+    .filter((source) => {
+      if (seen.has(source.uri)) return false;
+      seen.add(source.uri);
+      return true;
+    })
+    .slice(0, 6)
+    .map((source) => ({ title: source.title || source.uri, uri: source.uri }));
+}
 
 export default async function handler(req) {
   // ━━━ Only POST ━━━
@@ -173,6 +190,7 @@ export default async function handler(req) {
 
     const requestBody = {
       contents,
+      tools: [{ googleSearch: {} }],
       systemInstruction: {
         parts: [{ text: PERSONAL_SYSTEM_PROMPT }],
       },
@@ -242,8 +260,13 @@ export default async function handler(req) {
     }
 
     // ━━━ Return clean JSON ━━━
+    const sources = extractSources(data);
+    const content = sources.length
+      ? `${text}\n\nFontes consultadas:\n${sources.map((source) => `- ${source.title}: ${source.uri}`).join('\n')}`
+      : text;
+
     return new Response(
-      JSON.stringify({ content: text }),
+      JSON.stringify({ content, sources }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (err) {

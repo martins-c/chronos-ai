@@ -25,6 +25,32 @@ function cleanActionText(text, patterns) {
   return result.replace(/^[,:-]+/, '').trim();
 }
 
+export function parseTaskCommand(text) {
+  const original = String(text || '').trim().replace(/^chronos[,:]?\s*/i, '');
+  const normalized = normalize(original);
+  const verbs = '(?:adiciona|adicione|adicionar|coloca|coloque|incluir|inclua|cria|crie|criar|anota|anote)';
+  const patterns = [
+    new RegExp(`^${verbs}\\s+(?:uma\\s+)?(?:nova\\s+)?tarefas?\\s*(?:de|para|:)?\\s+(.+)$`, 'i'),
+    new RegExp(`^${verbs}\\s+(?:na|nas|em)\\s+(?:aba\\s+(?:de|das)\\s+)?tarefas?\\s*(?::)?\\s+(.+)$`, 'i'),
+    new RegExp(`^${verbs}\\s+(.+?)\\s+(?:na|nas|em)\\s+(?:aba\\s+(?:de|das)\\s+)?tarefas?\\s*$`, 'i'),
+  ];
+
+  for (const pattern of patterns) {
+    const match = original.match(pattern);
+    if (!match?.[1]) continue;
+    const title = match[1]
+      .replace(/\s+(?:por favor|pra mim|para mim)[.!?]*$/i, '')
+      .replace(/[.!?]+$/, '')
+      .trim();
+    if (title) return title;
+  }
+
+  if (/^(nova|criar) tarefa\b/.test(normalized)) {
+    return cleanActionText(original, [/^(nova|criar) tarefa\s*(?:de|para|:)?\s*/i]) || null;
+  }
+  return null;
+}
+
 export function buildBriefing() {
   const memory = readMemory();
   const stats = getProductivityStats();
@@ -103,11 +129,14 @@ export function executeAssistantCommand(text, { navigation, focusMode }) {
     };
   }
 
-  if (/^(criar|adicionar|nova) tarefa\b/.test(command)) {
-    const title = cleanActionText(text, [/^(criar|adicionar|nova) tarefa\s*/i]);
-    if (!title) return { handled: true, reply: 'Qual tarefa voce quer adicionar?' };
+  const taskTitle = parseTaskCommand(text);
+  if (taskTitle) {
+    const title = taskTitle;
     addTask(title);
-    return { handled: true, reply: `Tarefa criada: ${title}.` };
+    return { handled: true, reply: `Tarefa criada na aba Tarefas: ${title}.` };
+  }
+  if (/(adiciona|adicione|adicionar|coloca|coloque|cria|crie|criar|anota|anote).{0,35}\btarefas?\b/.test(command)) {
+    return { handled: true, reply: 'Qual tarefa voce quer adicionar?' };
   }
 
   if (/^(adicionar|incluir|criar).*(plano|prioridade)/.test(command)) {
